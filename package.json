@@ -6,8 +6,7 @@
   "scripts": {
     "ts:build": "tsc",
     "lint:fix": "eslint src/** --fix",
-    "release": "standard-version --no-verify && git push --follow-tags origin master",
-    "check:commit": "commitlint -E HUSKY_GIT_PARAMS"
+    "release": "standard-version --no-verify && git push --follow-tags origin master"
   },
   "repository": {
     "type": "git",
@@ -23,9 +22,16 @@
   },
   "homepage": "https://github.com/VirtualOctopus/VirtualOctopusJS#readme",
   "dependencies": {
+    "@oclif/command": "^1.5.19",
+    "@oclif/config": "^1.13.3",
+    "@oclif/errors": "^1.2.2",
+    "@oclif/plugin-help": "^2.2.3",
     "cheerio": "^1.0.0-rc.3",
     "lodash": "^4.17.15",
-    "sqlite3": "^4.1.1"
+    "mysql": "^2.17.1",
+    "reflect-metadata": "^0.1.13",
+    "sqlite3": "^4.1.1",
+    "typeorm": "^0.2.22"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^8.3.4",
@@ -54,7 +60,7 @@
       "/src/generator"
     ],
     "testEnvironment": "node",
-    "testRegex": "tests/.*\\.spec\\.ts$",
+    "testRegex": "src/**/.*\\.spec\\.ts$",
     "moduleFileExtensions": [
       "ts",
       "js",
@@ -63,7 +69,7 @@
   },
   "husky": {
     "hooks": {
-      "commit-msg": "npm run check:commit"
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
   }
 }

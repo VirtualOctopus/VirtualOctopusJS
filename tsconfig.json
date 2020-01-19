@@ -2,14 +2,21 @@
     "compilerOptions": {
         "charset": "UTF-8",
         "newLine": "lf",
-        "target": "ES5",
+        "target": "ES6",
+        "module": "CommonJS",
         "outDir": "lib",
+        "esModuleInterop": true,
         "moduleResolution": "node",
+        "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "declaration": true
+        "declaration": true,
+        "lib": [
+            "ES6"
+        ]
     },
     "include": [
-        "src"
+        "src",
+        "src/bin"
     ],
     "exclude": [
         "commitlint.config.js"
