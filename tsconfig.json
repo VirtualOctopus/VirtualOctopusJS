@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "charset": "UTF-8",
+        "newLine": "lf",
+        "target": "ES5",
+        "outDir": "lib",
+        "moduleResolution": "node",
+        "experimentalDecorators": true,
+        "declaration": true
+    },
+    "include": [
+        "src"
+    ]
+}

@@ -1,0 +1,34 @@
+{
+  "name": "virtualoctopusjs",
+  "version": "0.0.1",
+  "description": "yet another crawler application for nodejs",
+  "main": "index.js",
+  "scripts": {
+    "ts:build": "tsc",
+    "lint:fix": "eslint src/** --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VirtualOctopus/VirtualOctopusJS.git"
+  },
+  "author": "Theo Sun",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/VirtualOctopus/VirtualOctopusJS/issues"
+  },
+  "homepage": "https://github.com/VirtualOctopus/VirtualOctopusJS#readme",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
+    "lodash": "^4.17.15",
+    "sqlite3": "^4.1.1"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^2.16.0",
+    "@typescript-eslint/parser": "^2.16.0",
+    "eslint": "^6.8.0",
+    "jest": "^24.9.0",
+    "ts-jest": "^24.3.0",
+    "ts-node": "^8.6.2",
+    "typescript": "^3.7.5"
+  }
+}
