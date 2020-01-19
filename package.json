@@ -7,7 +7,7 @@
     "ts:build": "tsc",
     "lint:fix": "eslint src/** --fix",
     "release": "standard-version --no-verify && git push --follow-tags origin master",
-    "commitmsg": "commitlint -E GIT_PARAMS"
+    "check:commit": "commitlint -E HUSKY_GIT_PARAMS"
   },
   "repository": {
     "type": "git",
@@ -28,8 +28,10 @@
     "sqlite3": "^4.1.1"
   },
   "devDependencies": {
+    "@commitlint/config-conventional": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^2.16.0",
     "@typescript-eslint/parser": "^2.16.0",
+    "commitlint": "^8.3.5",
     "eslint": "^6.8.0",
     "husky": "^4.0.10",
     "jest": "^24.9.0",
@@ -58,5 +60,10 @@
       "js",
       "json"
     ]
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "npm run check:commit"
+    }
   }
 }
