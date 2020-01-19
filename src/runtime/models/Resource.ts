@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm";
+import { Entity, Column, BaseEntity, PrimaryColumn, Generated } from "typeorm";
 
 export enum ResourceProcessStatus {
     NOT_PROCESS,
@@ -9,13 +9,14 @@ export enum ResourceProcessStatus {
 @Entity({ name: "resource" })
 export class Resource extends BaseEntity {
 
-    @PrimaryGeneratedColumn({ type: "uuid" })
+    @PrimaryColumn()
+    @Generated("uuid")
     id: string;
 
     @Column({ length: 2048 })
     uri: string;
 
-    @Column()
+    @Column({ enum: ResourceProcessStatus })
     status: ResourceProcessStatus
 
 }

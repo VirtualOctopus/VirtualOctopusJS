@@ -10,6 +10,7 @@ module.exports = {
         'plugin:@typescript-eslint/recommended',
     ],
     rules: {
-        "semi": [2] // must end with semi
+        "semi": [2], // must end with semi
+        "@typescript-eslint/no-explicit-any": [0]
     }
 };

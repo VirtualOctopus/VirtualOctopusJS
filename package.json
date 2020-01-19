@@ -4,6 +4,7 @@
   "description": "yet another crawler application for nodejs",
   "main": "lib/index.js",
   "scripts": {
+    "test": "jest",
     "ts:build": "tsc",
     "lint:fix": "eslint src/** --fix",
     "release": "standard-version --no-verify && git push --follow-tags origin master"
@@ -35,6 +36,7 @@
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^8.3.4",
+    "@types/jest": "^24.9.0",
     "@typescript-eslint/eslint-plugin": "^2.16.0",
     "@typescript-eslint/parser": "^2.16.0",
     "commitlint": "^8.3.5",
@@ -54,13 +56,11 @@
       "src/**/*.ts"
     ],
     "coveragePathIgnorePatterns": [
-      "/tests/",
-      "/node_modules/",
-      "/src/cli",
-      "/src/generator"
+      "node_modules/",
+      "src/cli"
     ],
     "testEnvironment": "node",
-    "testRegex": "src/**/.*\\.spec\\.ts$",
+    "testRegex": "/src/.*\\Test\\.ts$",
     "moduleFileExtensions": [
       "ts",
       "js",
