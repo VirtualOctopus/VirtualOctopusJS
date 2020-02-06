@@ -1,4 +1,4 @@
-import { VORuntime } from './VORuntime';
+import { VORuntime, createVORuntime } from './VORuntime';
 
 describe('VO Runtime Test Suite', () => {
 
@@ -11,6 +11,10 @@ describe('VO Runtime Test Suite', () => {
             }
             cb();
         });
+    });
+
+    it('should create parallel runtime', async () => {
+        await createVORuntime();
     });
 
 });

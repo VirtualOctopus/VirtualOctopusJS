@@ -17,6 +17,6 @@ export class Resource extends BaseEntity {
     uri: string;
 
     @Column({ enum: ResourceProcessStatus })
-    status: ResourceProcessStatus
+    status: ResourceProcessStatus = ResourceProcessStatus.NOT_PROCESS
 
 }

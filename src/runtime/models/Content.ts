@@ -1,16 +1,21 @@
-import { BaseEntity, Entity, Column, PrimaryColumn, Generated } from 'typeorm';
+import { BaseEntity, Entity, Column, PrimaryColumn, Generated, OneToOne, JoinColumn } from 'typeorm';
+import { Resource } from './Resource';
 
 @Entity({ name: "content" })
 export class Content extends BaseEntity {
 
     @PrimaryColumn()
     @Generated("uuid")
-    id: string
+    id: string;
+
+    @OneToOne(() => Resource)
+    @JoinColumn()
+    resource: Resource;
 
     @Column({ type: "blob", comment: "The content source file Blob binary" })
     blob: Buffer;
 
-    @Column({ type: "blob", comment: "The serialized parsed content value" })
+    @Column({ type: "blob", comment: "The serialized parsed content value", nullable: true })
     content: Buffer;
 
     /**
@@ -18,7 +23,7 @@ export class Content extends BaseEntity {
      */
     public getContent(): any {
         if (this.content) {
-            return JSON.parse(this.content.toString());
+            return JSON.parse(this.content.toString("utf8"));
         }
     }
 
