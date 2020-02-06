@@ -4,7 +4,7 @@
   "description": "yet another crawler application for nodejs",
   "main": "lib/index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --detectOpenHandles",
     "ts:build": "tsc",
     "lint:fix": "eslint src/** --fix",
     "release": "standard-version --no-verify && git push --follow-tags origin master"
@@ -65,7 +65,7 @@
       "src/cli"
     ],
     "testEnvironment": "node",
-    "testRegex": "/src/.*\\Test\\.ts$",
+    "testRegex": "/src/.*\\.test\\.ts$",
     "moduleFileExtensions": [
       "ts",
       "js",

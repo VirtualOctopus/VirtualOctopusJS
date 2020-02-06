@@ -14,7 +14,19 @@ describe('VO Runtime Test Suite', () => {
     });
 
     it('should create parallel runtime', async () => {
-        await createVORuntime();
+        const r = await createVORuntime();
+        expect(r).not.toBeNull();
+        await r.destroy();
+    });
+
+    it('should try to scrabe quotes', async () => {
+
+        const r = await createVORuntime();
+
+        await r.startAt("http://quotes.toscrape.com/");
+
+        await r.destroy();
+
     });
 
 });
