@@ -1,4 +1,10 @@
 import { VORuntime, createVORuntime } from './VORuntime';
+import HTTPTextParser from './parsers/HTTPTextParser';
+import { ParseResult } from './parsers/VOParser';
+import cheerio from "cheerio";
+import { map } from "lodash";
+import { HTTPTextConsumer } from './consumers/HTTPTextConsumer';
+import { Content } from './models';
 
 describe('VO Runtime Test Suite', () => {
 
@@ -19,13 +25,57 @@ describe('VO Runtime Test Suite', () => {
         await r.destroy();
     });
 
-    it('should try to scrabe quotes', async () => {
+    it('should scrabe quotes', async () => {
 
+        let pages = 0;
+        let quotes = [];
         const r = await createVORuntime();
 
-        await r.startAt("http://quotes.toscrape.com/");
+        class Parser extends HTTPTextParser {
 
-        await r.destroy();
+            async parseText(html: string): Promise<ParseResult<any>> {
+                const rt: ParseResult = {};
+                const $ = cheerio.load(html);
+
+                rt.links = map($(".pager a"), e => `http://quotes.toscrape.com${$(e).attr("href")}`);
+
+                rt.parsedObject = map($(".quote > .text"), e => $(e).text());
+
+                return rt;
+            }
+
+            async accept(uri: string): Promise<boolean> {
+                return (uri == "http://quotes.toscrape.com/" || uri.startsWith("http://quotes.toscrape.com/page/"));
+            }
+
+        }
+
+        class Consumer extends HTTPTextConsumer {
+
+            async accept(uri: string): Promise<boolean> {
+                return (uri == "http://quotes.toscrape.com/" || uri.startsWith("http://quotes.toscrape.com/page/"));
+            }
+
+            async consume(content: Content<string[]>): Promise<void> {
+                pages++;
+                quotes = quotes.concat(content.getContent());
+            }
+
+        }
+
+        r.addParser(new Parser());
+        r.addConsumer(new Consumer());
+
+        try {
+            await r.startAt("http://quotes.toscrape.com/page/1/");
+        } finally {
+            await r.destroy();
+        }
+
+        expect(pages).toBe(10);
+
+        expect(quotes.length).toBe(100);
+
 
     });
 

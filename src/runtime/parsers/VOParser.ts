@@ -3,7 +3,7 @@ export interface ParseResult<T = any> {
     /**
      * the extracted information from resource
      */
-    parsedObject: T;
+    parsedObject?: T;
     links?: string[];
 }
 

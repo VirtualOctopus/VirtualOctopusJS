@@ -186,10 +186,11 @@ export class VORuntime {
     }
 
     private async onContentReceived(resource: Resource, originalContent: Buffer): Promise<void> {
+        const parser = await this._getParser(resource.uri);
         const newContent = new Content();
         newContent.resource = resource;
         newContent.blob = originalContent;
-        const parser = await this._getParser(resource.uri);
+
         if (parser) {
             const { links, parsedObject } = await parser.parse(originalContent);
             newContent.setContent(parsedObject);
