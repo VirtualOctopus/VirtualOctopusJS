@@ -2,7 +2,7 @@ import { BaseEntity, Entity, Column, PrimaryColumn, Generated, OneToOne, JoinCol
 import { Resource } from './Resource';
 
 @Entity({ name: "content" })
-export class Content extends BaseEntity {
+export class Content<T = any> extends BaseEntity {
 
     @PrimaryColumn()
     @Generated("uuid")
@@ -21,7 +21,7 @@ export class Content extends BaseEntity {
     /**
      * getContent
      */
-    public getContent(): any {
+    public getContent(): T {
         if (this.content) {
             return JSON.parse(this.content.toString("utf8"));
         }
@@ -30,7 +30,7 @@ export class Content extends BaseEntity {
     /**
      * setContent
      */
-    public setContent(c: any): void {
+    public setContent(c: T): void {
         this.content = Buffer.from(JSON.stringify(c), "utf8");
     }
 

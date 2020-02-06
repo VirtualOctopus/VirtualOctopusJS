@@ -1,7 +1,7 @@
 import { createConnection, Connection } from "typeorm";
 import { RuntimeModels, Resource, Content, ResourceProcessStatus } from './models/index';
 import EventEmitter from "events";
-import { VOParser } from "./parser/VOParser";
+import { VOParser } from "./parsers/VOParser";
 import log4js from "log4js";
 import got from "got";
 
@@ -51,7 +51,12 @@ export class VORuntime {
 
     private bus: EventEmitter;
 
-    private parsers: Array<VOParser>;
+    private parsers: Array<VOParser> = [];
+
+    public addParser(p: VOParser): VORuntime {
+        this.parsers.push(p);
+        return this;
+    }
 
     /**
      * destroy
@@ -105,12 +110,15 @@ export class VORuntime {
         if (parser) {
             const { links, parsedObject } = await parser.parse(originalContent);
             newContent.setContent(parsedObject);
-            links.forEach(link => {
-                const r = new Resource();
-                r.uri = link;
-                r.status = ResourceProcessStatus.NOT_PROCESS;
-                this.bus.emit("onQueueResource", r);
-            });
+            if (links) {
+                links.forEach(link => {
+                    const r = new Resource();
+                    r.uri = link;
+                    r.status = ResourceProcessStatus.NOT_PROCESS;
+                    this.bus.emit("onQueueResource", r);
+                });
+            }
+
         }
         newContent.save();
     }
