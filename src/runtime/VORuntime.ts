@@ -4,6 +4,7 @@ import EventEmitter from "events";
 import { VOParser } from "./parsers/VOParser";
 import log4js from "log4js";
 import got from "got";
+import { VOConsumer } from "./consumers/VOConsumer";
 
 type VORuntimeReadyCallback = (runtime?: VORuntime, error?: Error) => void;
 
@@ -30,6 +31,8 @@ export class VORuntime {
 
             this.bus.addListener("onContentRequest", this.onContentRequest);
 
+            this.bus.addListener("onContentParsed", this.onContentParsed);
+
             try {
                 if (cb) {
                     cb(this, undefined);
@@ -53,8 +56,15 @@ export class VORuntime {
 
     private parsers: Array<VOParser> = [];
 
+    private consumers: Array<VOConsumer> = [];
+
     public addParser(p: VOParser): VORuntime {
         this.parsers.push(p);
+        return this;
+    }
+
+    public addConsumer(c: VOConsumer): VORuntime {
+        this.consumers.push(c);
         return this;
     }
 
@@ -82,6 +92,21 @@ export class VORuntime {
 
         this.logger.error(`Not found parser for uri: ${uri}`);
 
+        return null;
+
+    }
+
+    private async _getConsumers(uri: string): Promise<VOConsumer[]> {
+        const rt = [];
+        for (let index = 0; index < this.consumers.length; index++) {
+            const consumer = this.consumers[index];
+            const accepted = await consumer.accept(uri);
+            if (accepted) {
+                rt.push(consumer);
+            }
+        }
+
+        return rt;
     }
 
     private async _retrieveBlob(uri: string): Promise<Buffer> {
@@ -121,6 +146,14 @@ export class VORuntime {
 
         }
         newContent.save();
+        this.bus.emit("onContentParsed", newContent);
+    }
+
+    private async onContentParsed(content: Content): Promise<void> {
+        const cs = await this._getConsumers(content.resource.uri);
+        cs.forEach(c => {
+            c.consume(content);
+        });
     }
 
     public async startAt(uri: string): Promise<void> {

@@ -1,6 +1,6 @@
-import { VOConsutomer } from "./VOConsumer";
+import { VOConsumer } from "./VOConsumer";
 
 
-export abstract class HTTPTextConsumer<T = any> extends VOConsutomer<T> {
+export abstract class HTTPTextConsumer<T = any> extends VOConsumer<T> {
 
 }
