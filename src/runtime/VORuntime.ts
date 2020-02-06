@@ -23,15 +23,7 @@ export class VORuntime {
 
             this.logger = log4js.getLogger("VORuntime");
 
-            this.bus = new EventEmitter();
-
-            this.bus.addListener("onContentReceived", this.onContentReceived);
-
-            this.bus.addListener("onQueueResource", this.onQueueResource);
-
-            this.bus.addListener("onContentRequest", this.onContentRequest);
-
-            this.bus.addListener("onContentParsed", this.onContentParsed);
+            this._setupBus();
 
             try {
                 if (cb) {
@@ -75,6 +67,20 @@ export class VORuntime {
         if (this.conn.isConnected) {
             return await this.conn.close();
         }
+    }
+
+    private _setupBus(): void {
+
+        this.bus = new EventEmitter();
+
+        this.bus.addListener("onContentReceived", this.onContentReceived);
+
+        this.bus.addListener("onQueueResource", this.onQueueResource);
+
+        this.bus.addListener("onContentRequest", this.onContentRequest);
+
+        this.bus.addListener("onContentParsed", this.onContentParsed);
+
     }
 
     private async isUriQueued(uri: string): Promise<boolean> {
