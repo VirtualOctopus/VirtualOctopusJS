@@ -7,7 +7,8 @@
     "test": "jest --detectOpenHandles",
     "ts:build": "tsc",
     "lint:fix": "eslint src/** --fix",
-    "release": "standard-version --no-verify && git push --follow-tags origin master"
+    "release": "standard-version --no-verify && git push --follow-tags origin master",
+    "coverage": "npm test -- --coverage --no-cache"
   },
   "repository": {
     "type": "git",
@@ -61,7 +62,8 @@
       ".(ts|tsx)": "ts-jest"
     },
     "collectCoverageFrom": [
-      "/src/**/*.ts"
+      "src/**/*.ts",
+      "!**/node_modules/**"
     ],
     "coveragePathIgnorePatterns": [
       "node_modules/",
