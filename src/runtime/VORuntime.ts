@@ -243,7 +243,7 @@ export class VORuntime {
     }
 
     private async onQueueResource(resource: Resource): Promise<void> {
-        if (this.processedCount <= this.options.pageLimit) {
+        if (this.processedCount < this.options.pageLimit) { // apply page limit 
             if (!await this.isUriQueued(resource.uri)) {
                 this._upProcessingCount();
                 resource.status = ResourceProcessStatus.PROCESSING;

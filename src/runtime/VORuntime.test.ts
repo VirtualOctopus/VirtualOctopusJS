@@ -72,9 +72,9 @@ describe('VO Runtime Test Suite', () => {
             await r.destroy();
         }
 
-        expect(pages).toBe(3);
+        expect(pages).toBe(2);
 
-        expect(quotes.length).toBe(30);
+        expect(quotes.length).toBe(20);
 
 
     });
