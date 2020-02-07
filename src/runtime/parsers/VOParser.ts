@@ -1,3 +1,4 @@
+import { VOPlugin, PluginKind } from "../base/VOPlugin";
 
 export interface ParseResult<T = any> {
     /**
@@ -7,7 +8,11 @@ export interface ParseResult<T = any> {
     links?: string[];
 }
 
-export abstract class VOParser<T = any> {
+export abstract class VOParser<T = any> extends VOPlugin {
+
+    getKind(): PluginKind {
+        return PluginKind.Parser;
+    }
 
     abstract accept(uri: string): Promise<boolean>;
 

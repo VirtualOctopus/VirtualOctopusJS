@@ -19,4 +19,15 @@ export class Resource extends BaseEntity {
     @Column({ enum: ResourceProcessStatus })
     status: ResourceProcessStatus = ResourceProcessStatus.NOT_PROCESS
 
+    /**
+     * setInProcessing
+     */
+    public setInProcessing(): void {
+        this.status = ResourceProcessStatus.PROCESSING;
+    }
+
+    public setProcessed(): void {
+        this.status = ResourceProcessStatus.PROCESSED;
+    }
+
 }

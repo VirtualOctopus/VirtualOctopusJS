@@ -5,11 +5,12 @@ import cheerio from "cheerio";
 import { map } from "lodash";
 import { HTTPTextConsumer } from './consumers/HTTPTextConsumer';
 import { Content } from './models';
+import { DefaultHTTPTextSender } from './senders/HTTPTextSender';
 
 describe('VO Runtime Test Suite', () => {
 
     it('should create & destroy database', (cb) => {
-        new VORuntime(async (r, err) => {
+        new VORuntime({}, async (r, err) => {
             if (err) {
                 expect(err).toBe(undefined);
             } else {
@@ -29,7 +30,7 @@ describe('VO Runtime Test Suite', () => {
 
         let pages = 0;
         let quotes = [];
-        const r = await createVORuntime();
+        const r = await createVORuntime({ pageLimit: 2, checkFinishInterval: 100 });
 
         class Parser extends HTTPTextParser {
 
@@ -63,8 +64,7 @@ describe('VO Runtime Test Suite', () => {
 
         }
 
-        r.addParser(new Parser());
-        r.addConsumer(new Consumer());
+        r.with([new Parser(), new Consumer(), new DefaultHTTPTextSender()]);
 
         try {
             await r.startAt("http://quotes.toscrape.com/page/1/");
@@ -72,9 +72,9 @@ describe('VO Runtime Test Suite', () => {
             await r.destroy();
         }
 
-        expect(pages).toBe(10);
+        expect(pages).toBe(3);
 
-        expect(quotes.length).toBe(100);
+        expect(quotes.length).toBe(30);
 
 
     });
