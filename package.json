@@ -67,7 +67,7 @@
     ],
     "coveragePathIgnorePatterns": [
       "node_modules/",
-      "src/cli"
+      "src/bin"
     ],
     "testEnvironment": "node",
     "testRegex": "/src/.*\\.test\\.ts$",
