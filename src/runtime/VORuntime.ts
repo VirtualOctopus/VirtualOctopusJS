@@ -1,10 +1,10 @@
 import { createConnection, Connection, Repository } from "typeorm";
 import { RuntimeModels, Resource, Content, ResourceProcessStatus } from './models/index';
 import EventEmitter from "events";
-import { VOParser } from "./parsers/VOParser";
+import { VOParser, ParserAcceptOptions } from "./parsers/VOParser";
 import log4js from "log4js";
-import { VOConsumer } from "./consumers/VOConsumer";
-import { VOSender } from "./senders/VOSender";
+import { VOConsumer, ConsumerAcceptOptions } from "./consumers/VOConsumer";
+import { VOSender, RetrieveResponse } from "./senders/VOSender";
 import { VOPlugin, PluginKind } from "./base/VOPlugin";
 
 type VORuntimeReadyCallback = (runtime?: VORuntime, error?: Error) => void;
@@ -177,17 +177,17 @@ export class VORuntime {
      * 
      * @param uri uri
      */
-    private async _getParser(uri: string): Promise<VOParser> {
+    private async _getParser(options: ParserAcceptOptions): Promise<VOParser> {
 
         for (let index = 0; index < this.parsers.length; index++) {
             const parser = this.parsers[index];
-            const accepted = await parser.accept(uri);
+            const accepted = await parser.accept(options);
             if (accepted) {
                 return parser;
             }
         }
 
-        this.logger.error(`Not found parser for uri: ${uri}`);
+        this.logger.error(`Not found parser for uri: ${options.uri}`);
 
         return null;
 
@@ -198,13 +198,13 @@ export class VORuntime {
      * 
      * @param uri uri for resource
      */
-    private async _getConsumers(uri: string): Promise<VOConsumer[]> {
+    private async _getConsumers(options: ConsumerAcceptOptions): Promise<VOConsumer[]> {
 
         const rt = [];
 
         for (let index = 0; index < this.consumers.length; index++) {
             const consumer = this.consumers[index];
-            const accepted = await consumer.accept(uri);
+            const accepted = await consumer.accept(options);
             if (accepted) {
                 rt.push(consumer);
             }
@@ -270,14 +270,16 @@ export class VORuntime {
 
     }
 
-    private async onContentReceived(resource: Resource, originalContent: Buffer): Promise<void> {
-        const parser = await this._getParser(resource.uri);
+    private async onContentReceived(resource: Resource, originalContent: RetrieveResponse): Promise<void> {
+        const parser = await this._getParser({ uri: resource.uri, type: originalContent.type });
         const newContent = new Content();
         newContent.resource = resource;
-        newContent.blob = originalContent;
+        newContent.blob = originalContent.content;
+        newContent.type = originalContent.type; // fallback type
 
         if (parser) {
-            const { links, parsedObject } = await parser.parse(originalContent);
+            const { links, parsedObject, type } = await parser.parse(originalContent.content);
+            newContent.type = type;
             newContent.setContent(parsedObject);
             if (links) {
                 links.forEach(link => {
@@ -298,7 +300,7 @@ export class VORuntime {
 
     private async onContentParsed(content: Content): Promise<void> {
 
-        const cs = await this._getConsumers(content.resource.uri);
+        const cs = await this._getConsumers({ uri: content.resource.uri, type: content.type });
 
         cs.forEach(c => {
             c.consume(content);

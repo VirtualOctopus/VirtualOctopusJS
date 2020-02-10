@@ -1,11 +1,11 @@
 import { VORuntime, createVORuntime } from './VORuntime';
 import HTTPTextParser from './parsers/HTTPTextParser';
-import { ParseResult } from './parsers/VOParser';
+import { ParseResult, ParserAcceptOptions } from './parsers/VOParser';
 import cheerio from "cheerio";
 import { map } from "lodash";
-import { HTTPTextConsumer } from './consumers/HTTPTextConsumer';
 import { Content } from './models';
 import { DefaultHTTPTextSender } from './senders/HTTPTextSender';
+import { VOConsumer, ConsumerAcceptOptions } from './consumers/VOConsumer';
 
 describe('VO Runtime Test Suite', () => {
 
@@ -34,9 +34,16 @@ describe('VO Runtime Test Suite', () => {
 
         class Parser extends HTTPTextParser {
 
+            async accept({ uri }: ParserAcceptOptions): Promise<boolean> {
+                // allow all types response from senders
+                return (uri == "http://quotes.toscrape.com/" || uri.startsWith("http://quotes.toscrape.com/page/"));
+            }
+
             async parseText(html: string): Promise<ParseResult<any>> {
                 const rt: ParseResult = {};
                 const $ = cheerio.load(html);
+
+                rt.type = "object/quotelist"; // this parser just return the 'object/quotelist' type response
 
                 rt.links = map($(".pager a"), e => `http://quotes.toscrape.com${$(e).attr("href")}`);
 
@@ -45,16 +52,13 @@ describe('VO Runtime Test Suite', () => {
                 return rt;
             }
 
-            async accept(uri: string): Promise<boolean> {
-                return (uri == "http://quotes.toscrape.com/" || uri.startsWith("http://quotes.toscrape.com/page/"));
-            }
 
         }
 
-        class Consumer extends HTTPTextConsumer {
+        class QuoteListConsumer extends VOConsumer {
 
-            async accept(uri: string): Promise<boolean> {
-                return (uri == "http://quotes.toscrape.com/" || uri.startsWith("http://quotes.toscrape.com/page/"));
+            async accept({ uri, type }: ConsumerAcceptOptions): Promise<boolean> {
+                return type == "object/quotelist" && (uri == "http://quotes.toscrape.com/" || uri.startsWith("http://quotes.toscrape.com/page/"));
             }
 
             async consume(content: Content<string[]>): Promise<void> {
@@ -64,7 +68,7 @@ describe('VO Runtime Test Suite', () => {
 
         }
 
-        r.with([new Parser(), new Consumer(), new DefaultHTTPTextSender()]);
+        r.with([new Parser(), new QuoteListConsumer(), new DefaultHTTPTextSender()]);
 
         try {
             await r.startAt("http://quotes.toscrape.com/page/1/");
@@ -72,8 +76,14 @@ describe('VO Runtime Test Suite', () => {
             await r.destroy();
         }
 
+        // assert the page limit
         expect(pages).toBe(2);
 
+        // assert the first quote
+        expect(quotes[0])
+            .toEqual("“The world as we have created it is a process of our thinking. It cannot be changed without changing our thinking.”");
+
+        // assert the quotes number
         expect(quotes.length).toBe(20);
 
 

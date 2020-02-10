@@ -1,4 +1,4 @@
-import { VOSender } from "./VOSender";
+import { VOSender, RetrieveResponse } from "./VOSender";
 import got from "got";
 
 export abstract class HTTPTextSender extends VOSender {
@@ -18,9 +18,9 @@ export class DefaultHTTPTextSender extends HTTPTextSender {
         return true;
     }
 
-    async retrieve(uri: string): Promise<Buffer> {
+    async retrieve(uri: string): Promise<RetrieveResponse> {
         const response = await got(uri);
-        return Buffer.from(response.body, "utf8");
+        return { content: Buffer.from(response.body, "utf8"), type: response.headers["content-type"] };
     }
 
 

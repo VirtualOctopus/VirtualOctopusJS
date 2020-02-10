@@ -18,6 +18,9 @@ export class Content<T = any> extends BaseEntity {
     @Column({ type: "blob", comment: "The serialized parsed content value", nullable: true })
     content: Buffer;
 
+    @Column({ comment: "type of content" })
+    type?: string;
+
     /**
      * getContent
      */

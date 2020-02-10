@@ -1,5 +1,9 @@
 import { VOPlugin, PluginKind } from "../base/VOPlugin";
 
+export interface RetrieveResponse {
+    content?: Buffer;
+    type?: string;
+}
 
 export abstract class VOSender extends VOPlugin {
 
@@ -9,6 +13,6 @@ export abstract class VOSender extends VOPlugin {
 
     abstract async accept(uri: string): Promise<boolean>;
 
-    abstract async retrieve(uri: string): Promise<Buffer>;
+    abstract async retrieve(uri: string): Promise<RetrieveResponse>;
 
 }
