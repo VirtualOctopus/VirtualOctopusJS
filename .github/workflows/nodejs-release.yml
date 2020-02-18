@@ -24,6 +24,6 @@ jobs:
         CI: true
     
     - name: npm auth & publish
-      run: |
-        echo "//registry.npmjs.org/:_authToken=$secrets.Z_NPM_TOKEN" > .npmrc
-        npm run ts:build && npm publish --access public --tag latest
+      run: npm run ts:build && npm publish --access public --tag latest
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.Z_NPM_TOKEN }}
