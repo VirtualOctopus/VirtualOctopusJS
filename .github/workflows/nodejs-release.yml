@@ -5,7 +5,7 @@ on:
         tags:
             - '*'
 jobs:
-  build:
+  publish:
 
     runs-on: ubuntu-latest
 
@@ -27,5 +27,5 @@ jobs:
       run: echo "//registry.npmjs.org/:_authToken=$Z_NPM_TOKEN" > .npmrc
 
     - name: publish
-      run: npm run build && npm publish --access public --tag latest
+      run: npm run ts:build && npm publish --access public --tag latest
 
