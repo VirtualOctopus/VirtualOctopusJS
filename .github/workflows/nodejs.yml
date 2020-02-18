@@ -28,7 +28,10 @@ jobs:
       with: 
         token: ${{ secrets.CODECOV_TOKEN }}
 
-on: tag
+on:   
+  create:
+    tags:
+      - *
 jobs:
   publish:
     runs-on: ubuntu-latest
