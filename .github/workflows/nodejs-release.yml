@@ -1,29 +1,31 @@
 name: Package Release
 
-on:   
+on: 
     push:
         tags:
             - '*'
 jobs:
-    publish:
-        runs-on: ubuntu-latest
+  build:
 
-        steps:
-            - uses: actions/checkout@v1
-            - name: Use Node.js 10.x
-            uses: actions/setup-node@v1
-            with:
-                node-version: 10.x
-            
-            - name: npm test
-            run: |
-                npm ci 
-                npm test
-            env:
-                CI: true
+    runs-on: ubuntu-latest
 
-            - name: npm auth
-            run: echo "//registry.npmjs.org/:_authToken=$Z_NPM_TOKEN" > .npmrc
+    steps:
+    - uses: actions/checkout@v1
+    - name: Use Node.js 10.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 10.x
+    
+    - name: npm test
+      run: |
+        npm ci
+        npm test
+      env:
+        CI: true
+    
+    - name: npm auth
+      run: echo "//registry.npmjs.org/:_authToken=$Z_NPM_TOKEN" > .npmrc
 
-            - name: publish
-            run: npm run build && npm publish --access public --tag latest
+    - name: publish
+      run: npm run build && npm publish --access public --tag latest
+
