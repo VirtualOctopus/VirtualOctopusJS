@@ -48,7 +48,6 @@ export class VORuntime {
             this.conn = conn;
 
             this.resourceRepo = this.conn.getRepository(Resource);
-            this.contentRepo = this.conn.getRepository(Content);
 
             this._setupBus();
 
@@ -79,8 +78,6 @@ export class VORuntime {
     private conn: Connection;
 
     private resourceRepo: Repository<Resource>;
-
-    private contentRepo: Repository<Content>;
 
     private bus: EventEmitter;
 
@@ -291,7 +288,6 @@ export class VORuntime {
 
         }
 
-        await this.contentRepo.save(newContent);
         resource.status = ResourceProcessStatus.PROCESSED;
         await this.resourceRepo.save(resource);
         this.bus.emit("onContentParsed", newContent);

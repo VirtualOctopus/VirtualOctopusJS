@@ -1,5 +1,5 @@
 {
-  "name": "virtualoctopusjs",
+  "name": "@virtualoctopusjs/virtualoctopusjs",
   "version": "0.0.1",
   "description": "yet another crawler application for nodejs",
   "main": "lib/index.js",
