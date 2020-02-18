@@ -10,7 +10,7 @@ jobs:
 
         steps:
             - uses: actions/checkout@v1
-            - name: Use Node.js ${{ matrix.node-version }}
+            - name: Use Node.js 10.x
             uses: actions/setup-node@v1
             with:
                 node-version: 10.x
@@ -23,7 +23,7 @@ jobs:
                 CI: true
 
             - name: npm auth
-            run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
+            run: echo "//registry.npmjs.org/:_authToken=$Z_NPM_TOKEN" > .npmrc
 
             - name: publish
             run: npm run build && npm publish --access public --tag latest
