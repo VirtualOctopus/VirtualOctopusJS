@@ -5,6 +5,14 @@ export interface ParserAcceptOptions {
     type?: string;
 }
 
+export interface ParserAcceptFunc {
+    ({ uri, type }: ParserAcceptOptions): Promise<boolean>;
+}
+
+export interface ParserParseFunc<T> {
+    (blob: Buffer): Promise<ParseResult<T>>;
+}
+
 export interface ParseResult<T = any> {
     /**
      * the extracted information from resource
@@ -26,4 +34,9 @@ export abstract class VOParser<T = any> extends VOPlugin {
 
 }
 
-
+export const createVOParser = <T>(accept: ParserAcceptFunc, parse: ParserParseFunc<T>, Clazz = VOParser): VOParser<T> => {
+    return new class extends Clazz {
+        accept = accept
+        parse = parse
+    };
+};

@@ -1,9 +1,6 @@
 import { VOSender, RetrieveResponse } from "./VOSender";
 import got from "got";
-
-export abstract class HTTPTextSender extends VOSender {
-
-}
+import { PooledVOSender } from "./PooledSender";
 
 /**
  * 
@@ -12,7 +9,7 @@ export abstract class HTTPTextSender extends VOSender {
  * Basic impl for text html
  * 
  */
-export class DefaultHTTPTextSender extends HTTPTextSender {
+export class DefaultHTTPTextSender extends VOSender {
 
     async accept(): Promise<boolean> {
         return true;
@@ -23,5 +20,22 @@ export class DefaultHTTPTextSender extends HTTPTextSender {
         return { content: Buffer.from(response.body, "utf8"), type: response.headers["content-type"] };
     }
 
+}
+
+
+export class DefaultPooledHTTPTextSender extends PooledVOSender {
+
+    async accept(): Promise<boolean> {
+        return true;
+    }
+
+    async retrieve(uri: string): Promise<RetrieveResponse> {
+        const relase = await this.acquire();
+        const response = await got(uri);
+        relase();
+        return { content: Buffer.from(response.body, "utf8"), type: response.headers["content-type"] };
+    }
 
 }
+
+
