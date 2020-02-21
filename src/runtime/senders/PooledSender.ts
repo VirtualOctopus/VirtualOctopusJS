@@ -17,7 +17,7 @@ export abstract class PooledVOSender extends VOSender {
         this.sem = new Semaphore(concurrent);
     }
 
-    private sem: Semaphore;
+    private sem: Semaphore = new Semaphore(25);
 
     protected async acquire(): Promise<ReleaseFunc> {
         return await this.sem.acquire();

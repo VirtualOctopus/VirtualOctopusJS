@@ -277,7 +277,7 @@ export class VORuntime {
         if (parser) {
             const { links, parsedObject, type } = await parser.parse(originalContent.content);
             newContent.type = type;
-            newContent.setContent(parsedObject);
+            newContent.setContent(parsedObject || {});
             if (links) {
                 links.forEach(link => {
                     const r = new Resource();
