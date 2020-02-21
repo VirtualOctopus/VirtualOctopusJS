@@ -3,7 +3,7 @@ import { ParseResult, ParserAcceptOptions } from './parsers/VOParser';
 import { map } from "lodash";
 import { Content } from './models';
 import { DefaultHTTPTextSender } from './senders/HTTPTextSender';
-import AbstractCheerIOParser from './parsers/AbstractCheerIOParser';
+import { AbstractCheerIOParser } from './parsers/AbstractCheerIOParser';
 import { createTypedVOConsumer } from './consumers/index';
 
 describe('VO Runtime Test Suite', () => {
