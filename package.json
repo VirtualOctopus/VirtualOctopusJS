@@ -1,6 +1,6 @@
 {
   "name": "@virtualoctopusjs/virtualoctopusjs",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "yet another crawler application for nodejs",
   "main": "lib/index.js",
   "scripts": {
