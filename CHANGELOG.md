@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.9](https://github.com/VirtualOctopus/VirtualOctopusJS/compare/v0.0.8...v0.0.9) (2020-02-21)
+
+
+### Bug Fixes
+
+* cheerio parser definition ([3c52af5](https://github.com/VirtualOctopus/VirtualOctopusJS/commit/3c52af53f965df27ce6ece5b56329267e10a522c))
+
 ### [0.0.8](https://github.com/VirtualOctopus/VirtualOctopusJS/compare/v0.0.7...v0.0.8) (2020-02-21)
 
 
