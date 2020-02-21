@@ -6,7 +6,7 @@ import log4js from "log4js";
 import { VOConsumer, ConsumerAcceptOptions } from "./consumers/VOConsumer";
 import { VOSender, RetrieveResponse } from "./senders/VOSender";
 import { VOPlugin, PluginKind } from "./base/VOPlugin";
-
+import { uniq } from "lodash";
 type VORuntimeReadyCallback = (runtime?: VORuntime, error?: Error) => void;
 
 export interface VORuntimeOptions {
@@ -279,7 +279,7 @@ export class VORuntime {
             newContent.type = type;
             newContent.setContent(parsedObject || {});
             if (links) {
-                links.forEach(link => {
+                uniq(links).forEach(link => {
                     const r = new Resource();
                     r.uri = link;
                     this.bus.emit("onQueueResource", r);
