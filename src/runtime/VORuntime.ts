@@ -301,7 +301,7 @@ export class VORuntime {
 
             } catch (error) {
 
-                console.error(`parse content failed for uri: ${resource.uri}`);
+                console.error(`parse content failed for uri: ${resource.uri}, ${error}`);
 
             }
 
@@ -317,8 +317,12 @@ export class VORuntime {
 
         const cs = await this._getConsumers({ uri: content.resource.uri, type: content.type });
 
-        cs.forEach(c => {
-            c.consume(content);
+        cs.forEach(async c => {
+            try {
+                await c.consume(content);
+            } catch (error) {
+                console.error(`consume ${content.resource.uri} failed: ${error}`);
+            }
         });
 
     }
