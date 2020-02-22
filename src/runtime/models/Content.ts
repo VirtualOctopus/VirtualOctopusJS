@@ -1,4 +1,4 @@
-import { BaseEntity, Entity, Column, PrimaryColumn, Generated, OneToOne, JoinColumn } from 'typeorm';
+import { BaseEntity } from 'typeorm';
 import { Resource } from './Resource';
 
 export class Content<T = any> extends BaseEntity {
