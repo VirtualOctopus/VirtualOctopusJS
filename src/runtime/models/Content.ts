@@ -9,7 +9,7 @@ export class Content<T = any> extends BaseEntity {
 
     blob: Buffer;
 
-    content: Buffer;
+    content: T;
 
     type?: string;
 
@@ -18,7 +18,7 @@ export class Content<T = any> extends BaseEntity {
      */
     public getContent(): T {
         if (this.content) {
-            return JSON.parse(this.content.toString("utf8"));
+            return this.content;
         }
     }
 
@@ -26,7 +26,7 @@ export class Content<T = any> extends BaseEntity {
      * setContent
      */
     public setContent(c: T): void {
-        this.content = Buffer.from(JSON.stringify(c), "utf8");
+        this.content = c;
     }
 
 }
