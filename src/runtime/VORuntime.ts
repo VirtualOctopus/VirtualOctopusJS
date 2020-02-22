@@ -250,19 +250,29 @@ export class VORuntime {
         }
     }
 
+    private async _setResourceProcessed(r: Resource): Promise<void> {
+        r.setProcessed();
+        await this.resourceRepo.save(r);
+        this._downProcessingCount();
+    }
+
     private async onContentRequest(resource: Resource): Promise<void> {
 
         const sender = await this._getSender(resource.uri);
 
         if (sender) {
             // use sender to retrieve data
-            const content = await sender.retrieve(resource.uri);
-            this.bus.emit("onContentReceived", resource, content);
+            try {
+                const content = await sender.retrieve(resource.uri);
+                this.bus.emit("onContentReceived", resource, content);
+            } catch (error) {
+                console.error(`fetch ${resource.uri} failed: ${error}`);
+                await this._setResourceProcessed(resource);
+            }
+
         } else {
             // not found sender
-            resource.setProcessed();
-            await this.resourceRepo.save(resource);
-            this._downProcessingCount();
+            await this._setResourceProcessed(resource);
         }
 
     }
@@ -275,21 +285,30 @@ export class VORuntime {
         newContent.type = originalContent.type; // fallback type
 
         if (parser) {
-            const { links, parsedObject, type } = await parser.parse(originalContent.content);
-            newContent.type = type;
-            newContent.setContent(parsedObject || {});
-            if (links) {
-                uniq(links).forEach(link => {
-                    const r = new Resource();
-                    r.uri = link;
-                    this.bus.emit("onQueueResource", r);
-                });
+
+            try {
+                const { links, parsedObject, type } = await parser.parse(originalContent.content);
+                newContent.type = type;
+                newContent.setContent(parsedObject || {});
+
+                if (links) {
+                    uniq(links).forEach(link => {
+                        const r = new Resource();
+                        r.uri = link;
+                        this.bus.emit("onQueueResource", r);
+                    });
+                }
+
+            } catch (error) {
+
+                console.error(`parse content failed for uri: ${resource.uri}`);
+
             }
 
         }
 
-        resource.status = ResourceProcessStatus.PROCESSED;
-        await this.resourceRepo.save(resource);
+        this._setResourceProcessed(resource);
+
         this.bus.emit("onContentParsed", newContent);
 
     }
@@ -301,8 +320,6 @@ export class VORuntime {
         cs.forEach(c => {
             c.consume(content);
         });
-
-        this._downProcessingCount(); // this resource is process finished
 
     }
 
