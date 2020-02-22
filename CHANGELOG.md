@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.14](https://github.com/VirtualOctopus/VirtualOctopusJS/compare/v0.0.13...v0.0.14) (2020-02-22)
+
+
+### Features
+
+* support multi entry ([5819821](https://github.com/VirtualOctopus/VirtualOctopusJS/commit/5819821f8806d127eba568c2c838c40391433830))
+
 ### [0.0.13](https://github.com/VirtualOctopus/VirtualOctopusJS/compare/v0.0.12...v0.0.13) (2020-02-22)
 
 
