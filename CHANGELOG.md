@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.13](https://github.com/VirtualOctopus/VirtualOctopusJS/compare/v0.0.12...v0.0.13) (2020-02-22)
+
+
+### Features
+
+* error processing for consumer ([8470d6f](https://github.com/VirtualOctopus/VirtualOctopusJS/commit/8470d6fe8ff66acd737d663ec8e38e4c5ab2377b))
+
 ### [0.0.12](https://github.com/VirtualOctopus/VirtualOctopusJS/compare/v0.0.11...v0.0.12) (2020-02-22)
 
 
