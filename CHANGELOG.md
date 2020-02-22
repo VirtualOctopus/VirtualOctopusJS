@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.15](https://github.com/VirtualOctopus/VirtualOctopusJS/compare/v0.0.14...v0.0.15) (2020-02-22)
+
+
+### Features
+
+* Content support runtime type ([354b16e](https://github.com/VirtualOctopus/VirtualOctopusJS/commit/354b16e9834f67c1798c728c547e51e12c98b49c))
+
 ### [0.0.14](https://github.com/VirtualOctopus/VirtualOctopusJS/compare/v0.0.13...v0.0.14) (2020-02-22)
 
 
