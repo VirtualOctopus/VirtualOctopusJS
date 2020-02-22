@@ -6,7 +6,7 @@ import log4js from "log4js";
 import { VOConsumer, ConsumerAcceptOptions } from "./consumers/VOConsumer";
 import { VOSender, RetrieveResponse } from "./senders/VOSender";
 import { VOPlugin, PluginKind } from "./base/VOPlugin";
-import { uniq } from "lodash";
+import { uniq, isArray } from "lodash";
 type VORuntimeReadyCallback = (runtime?: VORuntime, error?: Error) => void;
 
 export interface VORuntimeOptions {
@@ -301,7 +301,7 @@ export class VORuntime {
 
             } catch (error) {
 
-                console.error(`parse content failed for uri: ${resource.uri}, ${error}`);
+                console.error(`parse content failed for uri: '${resource.uri}', ${error}`);
 
             }
 
@@ -344,22 +344,41 @@ export class VORuntime {
     }
 
     /**
+     * add resource into runtime
+     * 
+     * @param uri 
+     */
+    public addResource(uri: string | string[]): void {
+        if (isArray(uri)) {
+            uri.forEach(u => {
+                const r = new Resource();
+                r.uri = u;
+                // push resource to bus
+                this.bus.emit("onQueueResource", r);
+            });
+        } else {
+            const r = new Resource();
+            r.uri = uri;
+            // push resource to bus
+            this.bus.emit("onQueueResource", r);
+        }
+
+    }
+
+    /**
      * start at an entry uri
      * 
      * @param uri 
      * @param cbOnFinished 
      */
-    public async startAt(uri: string): Promise<void> {
+    public async startAt(uri: string | string[]): Promise<void> {
         return new Promise(resolve => {
-            const resource = new Resource();
-            resource.uri = uri;
+            this.addResource(uri);
             this._startCheckFinished();
             // resolve on finished
             this.bus.addListener("finished", () => {
                 resolve();
             });
-            // push resource to bus
-            this.bus.emit("onQueueResource", resource);
         });
 
     }
