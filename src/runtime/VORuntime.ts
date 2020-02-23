@@ -232,13 +232,17 @@ export class VORuntime {
         return (await this._store.query(ResourceProcessStatus.PROCESSING)).length;
     }
 
+    private async _getLockedCount(): Promise<number> {
+        return (await this._store.query(ResourceProcessStatus.LOCKED)).length;
+    }
+
     /**
      * onQueueResource, prepare send request
      * 
      * @param resource 
      */
     private async onQueueResource(resource: Resource): Promise<void> {
-        await this._setResourceLock(resource); // lock first
+
         const totalReqCount = await this._store.getRequestCount();
 
         if (totalReqCount < this.options.pageLimit) { // page limit 
@@ -348,17 +352,23 @@ export class VORuntime {
 
             // some resource not be requested
             if (notProcessItems.length > 0) {
-                take(notProcessItems, this.options.eventLimit).forEach(u => {
-                    this.bus.emit("onQueueResource", new Resource(u));
-                });
+                await Promise.all(
+                    take(notProcessItems, this.options.eventLimit).map(async u => {
+                        const r = new Resource(u);
+                        await this._setResourceLock(r); // lock first
+                        this.bus.emit("onQueueResource", r);
+                    })
+                );
             }
 
             // all items has been requested
             else {
 
                 const c = await this._getProcessingCount();
+                const l = await this._getLockedCount();
+
                 // no items still in processing
-                if (c == 0) {
+                if (c == 0 && l == 0) {
                     clearInterval(task);
                     this.bus.emit("finished");
                     this.bus.removeAllListeners("finished");
