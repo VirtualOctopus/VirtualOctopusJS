@@ -232,18 +232,30 @@ export class VORuntime {
         return (await this._store.query(ResourceProcessStatus.PROCESSING)).length;
     }
 
+    /**
+     * onQueueResource, prepare send request
+     * 
+     * @param resource 
+     */
     private async onQueueResource(resource: Resource): Promise<void> {
         await this._setResourceLock(resource); // lock first
         const totalReqCount = await this._store.getRequestCount();
-        if (totalReqCount < this.options.pageLimit) { // apply page limit 
+
+        if (totalReqCount < this.options.pageLimit) { // page limit 
             if (!await this._isUriQueued(resource.uri)) {
                 await this._store.setRequestCount(totalReqCount + 1);
                 await this._setResourceProcessing(resource);
                 this.bus.emit("onContentRequest", resource);
             }
         }
+
     }
 
+    /**
+     * onContentRequest, use sender to request resource binary
+     * 
+     * @param resource 
+     */
     private async onContentRequest(resource: Resource): Promise<void> {
 
         const sender = await this._getSender(resource.uri);
@@ -260,11 +272,18 @@ export class VORuntime {
 
         } else {
             // not found sender
+            this.logger.error(`not found sender for uri: ${resource.uri}`);
             await this._setResourceProcessed(resource);
         }
 
     }
 
+    /**
+     * onContentReceived, parse it
+     * 
+     * @param resource 
+     * @param originalContent 
+     */
     private async onContentReceived(resource: Resource, originalContent: RetrieveResponse): Promise<void> {
 
         const parser = await this._getParser({ uri: resource.uri, type: originalContent.type });
@@ -303,6 +322,11 @@ export class VORuntime {
 
     }
 
+    /**
+     * onContentParsed, consume it
+     * 
+     * @param content 
+     */
     private async onContentParsed(content: Content): Promise<void> {
 
         const cs = await this._getConsumers({ uri: content.resource.uri, type: content.type });
