@@ -8,7 +8,7 @@
 ![Package Release](https://github.com/VirtualOctopus/VirtualOctopusJS/workflows/Package%20Release/badge.svg)
 ![npm (scoped)](https://img.shields.io/npm/v/@virtualoctopusjs/virtualoctopusjs)
 
-Virtual Octopus is used for discovering virtual world data.
+Virtual Octopus is used to discover the virtual world.
 
 ## Document To Be Done.
 
