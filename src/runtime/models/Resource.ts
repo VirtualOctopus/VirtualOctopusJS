@@ -1,23 +1,29 @@
-import { Entity, Column, BaseEntity, PrimaryColumn, Generated } from "typeorm";
 
 export enum ResourceProcessStatus {
-    NOT_PROCESS,
+    /**
+     * new queued
+     */
+    NEW,
+    /**
+     * in processing
+     */
     PROCESSING,
-    PROCESSED
+    /**
+     * process finished
+     */
+    PROCESSED,
+    /**
+     * this resource is locked, maybe ready to process
+     */
+    LOCKED
 }
 
-@Entity({ name: "resource" })
-export class Resource extends BaseEntity {
+export class Resource {
 
-    @PrimaryColumn()
-    @Generated("uuid")
-    id: string;
 
-    @Column({ length: 2048 })
     uri: string;
 
-    @Column({ enum: ResourceProcessStatus })
-    status: ResourceProcessStatus = ResourceProcessStatus.NOT_PROCESS
+    status: ResourceProcessStatus = ResourceProcessStatus.NEW
 
     /**
      * setInProcessing

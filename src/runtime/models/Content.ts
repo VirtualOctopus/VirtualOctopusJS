@@ -1,7 +1,6 @@
-import { BaseEntity } from 'typeorm';
 import { Resource } from './Resource';
 
-export class Content<T = any> extends BaseEntity {
+export class Content<T = any>  {
 
     id: string;
 

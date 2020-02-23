@@ -1,5 +1,4 @@
-import { createConnection, Connection, Repository } from "typeorm";
-import { RuntimeModels, Resource, Content, ResourceProcessStatus } from './models/index';
+import { Resource, Content, ResourceProcessStatus } from './models/index';
 import EventEmitter from "events";
 import { VOParser, ParserAcceptOptions } from "./parsers/VOParser";
 import log4js from "log4js";
@@ -7,6 +6,9 @@ import { VOConsumer, ConsumerAcceptOptions } from "./consumers/VOConsumer";
 import { VOSender, RetrieveResponse } from "./senders/VOSender";
 import { VOPlugin, PluginKind } from "./base/VOPlugin";
 import { uniq, isArray } from "lodash";
+import { Store } from "./stores";
+import { MemoryStore } from "./stores/MemoryStore";
+
 type VORuntimeReadyCallback = (runtime?: VORuntime, error?: Error) => void;
 
 export interface VORuntimeOptions {
@@ -21,11 +23,18 @@ export interface VORuntimeOptions {
      */
     checkFinishInterval?: number;
 
+    /**
+     * resource store
+     */
+    store?: Store;
+
+    logLevel?: string;
+
 }
 
 const DefaultVORuntimeOptions: VORuntimeOptions = {
     pageLimit: Number.MAX_SAFE_INTEGER,
-    checkFinishInterval: 300,
+    checkFinishInterval: 300
 };
 
 export class VORuntime {
@@ -34,38 +43,19 @@ export class VORuntime {
 
         this.logger = log4js.getLogger("VORuntime");
 
-        // create an in-memory sqlite instance to simplify the query logic
-        createConnection({
-            name: "runtime",
-            type: "sqlite",
-            database: ":memory:",
-            synchronize: true,
-            entities: RuntimeModels
-        }).then(conn => {
+        this.options = Object.assign(DefaultVORuntimeOptions, options); // merge default options
 
-            this.options = Object.assign(DefaultVORuntimeOptions, options);
+        this._store = this.options.store || new MemoryStore(); // default memory store
 
-            this.conn = conn;
+        this.logger.level = this.options.logLevel || process.env.VO_LOG_LEVEL || log4js.levels.ERROR.levelStr; // default log level
 
-            this.resourceRepo = this.conn.getRepository(Resource);
+        this._setupBus();
 
-            this._setupBus();
+        cb(this);
 
-            try {
-                if (cb) {
-                    cb(this, undefined);
-                }
-            } finally {
-                // nothing
-            }
-
-        }).catch(err => {
-            if (cb) {
-                cb(undefined, err);
-            }
-        });
     }
 
+    private _store: Store;
 
     private options: VORuntimeOptions = {};
 
@@ -74,10 +64,6 @@ export class VORuntime {
     private processingCount = 0;
 
     private processedCount = 0;
-
-    private conn: Connection;
-
-    private resourceRepo: Repository<Resource>;
 
     private bus: EventEmitter;
 
@@ -137,8 +123,8 @@ export class VORuntime {
      * destroy runtime & db connection
      */
     public async destroy(): Promise<void> {
-        if (this.conn.isConnected) {
-            return await this.conn.close();
+        if (this._store) {
+            return await this._store.release();
         }
     }
 
@@ -159,15 +145,6 @@ export class VORuntime {
 
     }
 
-    /**
-     * check the uri wether queued
-     * 
-     * @param uri 
-     */
-    private async isUriQueued(uri: string): Promise<boolean> {
-        const count = (await this.resourceRepo.count({ uri: uri }));
-        return (count > 0);
-    }
 
     /**
      * get parser for uri
@@ -225,7 +202,6 @@ export class VORuntime {
         return null;
     }
 
-
     private _upProcessingCount(): void {
         this.processedCount += 1;
         this.processingCount += 1;
@@ -235,25 +211,38 @@ export class VORuntime {
         this.processingCount -= 1;
     }
 
+    /**
+     * check the uri wether queued, return true means has been queued
+     * 
+     * @param uri 
+     */
+    private async _isUriQueued(uri: string): Promise<boolean> {
+        // with status, means queued
+        return (await this._store.status(uri)) != null;
+    }
+
+    private async _setResourceProcessing(r: Resource): Promise<void> {
+        await this._store.save(r.uri, ResourceProcessStatus.PROCESSING);
+        this._upProcessingCount();
+    }
+
+    private async _setResourceProcessed(r: Resource): Promise<void> {
+        await this._store.save(r.uri, ResourceProcessStatus.PROCESSED);
+        this._downProcessingCount();
+    }
+
+
     private _getProcessingCount(): number {
         return this.processingCount;
     }
 
     private async onQueueResource(resource: Resource): Promise<void> {
         if (this.processedCount < this.options.pageLimit) { // apply page limit 
-            if (!await this.isUriQueued(resource.uri)) {
-                this._upProcessingCount();
-                resource.status = ResourceProcessStatus.PROCESSING;
-                await this.resourceRepo.save(resource);
+            if (!await this._isUriQueued(resource.uri)) {
+                await this._setResourceProcessing(resource);
                 this.bus.emit("onContentRequest", resource);
             }
         }
-    }
-
-    private async _setResourceProcessed(r: Resource): Promise<void> {
-        r.setProcessed();
-        await this.resourceRepo.save(r);
-        this._downProcessingCount();
     }
 
     private async onContentRequest(resource: Resource): Promise<void> {
@@ -266,7 +255,7 @@ export class VORuntime {
                 const content = await sender.retrieve(resource.uri);
                 this.bus.emit("onContentReceived", resource, content);
             } catch (error) {
-                console.error(`fetch ${resource.uri} failed: ${error}`);
+                this.logger.error(`fetch ${resource.uri} failed: ${error}`);
                 await this._setResourceProcessed(resource);
             }
 
@@ -278,6 +267,7 @@ export class VORuntime {
     }
 
     private async onContentReceived(resource: Resource, originalContent: RetrieveResponse): Promise<void> {
+
         const parser = await this._getParser({ uri: resource.uri, type: originalContent.type });
         const newContent = new Content();
         newContent.resource = resource;
@@ -301,7 +291,7 @@ export class VORuntime {
 
             } catch (error) {
 
-                console.error(`parse content failed for uri: '${resource.uri}', ${error}`);
+                this.logger.error(`parse content failed for uri: '${resource.uri}', ${error}`);
 
             }
 
@@ -321,7 +311,7 @@ export class VORuntime {
             try {
                 await c.consume(content);
             } catch (error) {
-                console.error(`consume ${content.resource.uri} failed: ${error}`);
+                this.logger.error(`consume ${content.resource.uri} failed: ${error}`);
             }
         });
 
@@ -331,8 +321,8 @@ export class VORuntime {
 
         const task = setInterval(async (): Promise<void> => {
             if (this._getProcessingCount() == 0) {
-                const c = await this.resourceRepo.count({ status: ResourceProcessStatus.PROCESSING });
-                if (c == 0) {
+                const c = await this._store.query(ResourceProcessStatus.PROCESSING);
+                if (c.length == 0) {
                     clearInterval(task);
                     this.bus.emit("finished");
                     this.bus.removeAllListeners("finished");
@@ -350,17 +340,11 @@ export class VORuntime {
      */
     public addResource(uri: string | string[]): void {
         if (isArray(uri)) {
-            uri.forEach(u => {
-                const r = new Resource();
-                r.uri = u;
-                // push resource to bus
-                this.bus.emit("onQueueResource", r);
-            });
+            uri.forEach(u => { this.addResource(u); });
         } else {
             const r = new Resource();
             r.uri = uri;
-            // push resource to bus
-            this.bus.emit("onQueueResource", r);
+            this.bus.emit("onQueueResource", r); // push resource to bus
         }
 
     }
@@ -372,10 +356,14 @@ export class VORuntime {
      * @param cbOnFinished 
      */
     public async startAt(uri: string | string[]): Promise<void> {
+
+        // when start, add resource status 'NEW' from store
+        this.addResource(await this._store.query(ResourceProcessStatus.NEW));
+        this.addResource(uri);
+        this._startCheckFinished();
+
         return new Promise(resolve => {
-            this.addResource(uri);
-            this._startCheckFinished();
-            // resolve on finished
+            // startAt function wiil be resolved on finished
             this.bus.addListener("finished", () => {
                 resolve();
             });
