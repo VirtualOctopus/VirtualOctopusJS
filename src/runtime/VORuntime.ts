@@ -348,27 +348,31 @@ export class VORuntime {
     private async scheduleRunner(): Promise<void> {
 
         const task = setInterval(async (): Promise<void> => {
+            const lockedCount = await this._getLockedCount();
+            const inProcessingCount = await this._getProcessingCount();
+            const totalInRuntimeCount = lockedCount + inProcessingCount;
             const notProcessItems = await this._store.query(ResourceProcessStatus.NEW);
 
             // some resource not be requested
             if (notProcessItems.length > 0) {
-                await Promise.all(
-                    take(notProcessItems, this.options.eventLimit).map(async u => {
-                        const r = new Resource(u);
-                        await this._setResourceLock(r); // lock first
-                        this.bus.emit("onQueueResource", r);
-                    })
-                );
+                // in processing item less than event limit
+                if (totalInRuntimeCount < this.options.eventLimit) {
+                    await Promise.all(
+                        take(notProcessItems, this.options.eventLimit).map(async u => {
+                            const r = new Resource(u);
+                            await this._setResourceLock(r); // lock first
+                            this.bus.emit("onQueueResource", r);
+                        })
+                    );
+
+                }
             }
 
-            // all items has been requested
+            // all items has been requested, notProcessItems == 0
             else {
 
-                const c = await this._getProcessingCount();
-                const l = await this._getLockedCount();
-
                 // no items still in processing
-                if (c == 0 && l == 0) {
+                if (totalInRuntimeCount == 0) {
                     clearInterval(task);
                     this.bus.emit("finished");
                     this.bus.removeAllListeners("finished");
