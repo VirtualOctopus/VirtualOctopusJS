@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.17](https://github.com/VirtualOctopus/VirtualOctopusJS/compare/v0.0.16...v0.0.17) (2020-02-23)
+
+
+### Features
+
+* refactor schedule logic ([1e0b8c0](https://github.com/VirtualOctopus/VirtualOctopusJS/commit/1e0b8c005f23050149d1bddc830449520f3a8eb1))
+
 ### [0.0.16](https://github.com/VirtualOctopus/VirtualOctopusJS/compare/v0.0.15...v0.0.16) (2020-02-23)
 
 
