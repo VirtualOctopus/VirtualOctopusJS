@@ -246,7 +246,7 @@ export class VORuntime {
         const totalReqCount = await this._store.getRequestCount();
 
         if (totalReqCount < this.options.pageLimit) { // page limit 
-            if (!await this._isUriQueued(resource.uri)) {
+            if (!(await this._isUriQueued(resource.uri))) {
                 await this._store.setRequestCount(totalReqCount + 1);
                 await this._setResourceProcessing(resource);
                 this.bus.emit("onContentRequest", resource);
@@ -347,6 +347,8 @@ export class VORuntime {
 
     private async scheduleRunner(): Promise<void> {
 
+        const { eventLimit } = this.options;
+
         const task = setInterval(async (): Promise<void> => {
             const lockedCount = await this._getLockedCount();
             const inProcessingCount = await this._getProcessingCount();
@@ -356,10 +358,10 @@ export class VORuntime {
             // some resource not be requested
             if (notProcessItems.length > 0) {
                 // in processing item less than event limit
-                if (totalInRuntimeCount < this.options.eventLimit) {
+                if (totalInRuntimeCount < eventLimit) {
 
                     await Promise.all(
-                        take(notProcessItems, this.options.eventLimit).map(async u => {
+                        take(notProcessItems, eventLimit).map(async u => {
                             const r = new Resource(u);
                             await this._setResourceLock(r); // lock first
                             this.bus.emit("onQueueResource", r);
@@ -395,7 +397,10 @@ export class VORuntime {
         if (isArray(uri)) {
             await Promise.all(uri.map(u => this.enqueueResource(u)));
         } else {
-            await this._setResourceNew(new Resource(uri));
+            const s = await this._store.status(uri);
+            if (s == null) {
+                await this._setResourceNew(new Resource(uri));
+            }
         }
 
         return this;
