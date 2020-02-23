@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.21](https://github.com/VirtualOctopus/VirtualOctopusJS/compare/v0.0.20...v0.0.21) (2020-02-23)
+
+
+### Bug Fixes
+
+* new queue status check ([9386d54](https://github.com/VirtualOctopus/VirtualOctopusJS/commit/9386d54cfec4660bab19e6f8a763c4f9a8b4921d))
+
 ### [0.0.20](https://github.com/VirtualOctopus/VirtualOctopusJS/compare/v0.0.19...v0.0.20) (2020-02-23)
 
 
