@@ -251,6 +251,9 @@ export class VORuntime {
                 await this._setResourceProcessing(resource);
                 this.bus.emit("onContentRequest", resource);
             }
+        } else {
+            await this._setResourceProcessed(resource);
+            this.logger.info(`page limit exceeded, uri: %s ignore.`, resource.uri);
         }
 
     }
@@ -301,15 +304,12 @@ export class VORuntime {
 
             try {
                 const { links, parsedObject, type } = await parser.parse(originalContent.content);
+
                 newContent.type = type;
                 newContent.setContent(parsedObject || {});
 
                 if (links) {
-                    uniq(links).forEach(link => {
-                        const r = new Resource();
-                        r.uri = link;
-                        this.bus.emit("onQueueResource", r);
-                    });
+                    await this.enqueueResource(uniq(links));
                 }
 
             } catch (error) {
@@ -357,6 +357,7 @@ export class VORuntime {
             if (notProcessItems.length > 0) {
                 // in processing item less than event limit
                 if (totalInRuntimeCount < this.options.eventLimit) {
+
                     await Promise.all(
                         take(notProcessItems, this.options.eventLimit).map(async u => {
                             const r = new Resource(u);
