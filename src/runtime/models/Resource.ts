@@ -3,23 +3,26 @@ export enum ResourceProcessStatus {
     /**
      * new queued
      */
-    NEW,
+    NEW = "NEW",
     /**
      * in processing
      */
-    PROCESSING,
+    PROCESSING = "PROCESS_ING",
     /**
      * process finished
      */
-    PROCESSED,
+    PROCESSED = "PROCESS_ED",
     /**
      * this resource is locked, maybe ready to process
      */
-    LOCKED
+    LOCKED = "LOCKED"
 }
 
 export class Resource {
 
+    constructor(uri?: string) {
+        this.uri = uri;
+    }
 
     uri: string;
 

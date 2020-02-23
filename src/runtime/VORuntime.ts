@@ -5,7 +5,7 @@ import log4js from "log4js";
 import { VOConsumer, ConsumerAcceptOptions } from "./consumers/VOConsumer";
 import { VOSender, RetrieveResponse } from "./senders/VOSender";
 import { VOPlugin, PluginKind } from "./base/VOPlugin";
-import { uniq, isArray } from "lodash";
+import { uniq, isArray, take } from "lodash";
 import { Store } from "./stores";
 import { MemoryStore } from "./stores/MemoryStore";
 
@@ -30,11 +30,14 @@ export interface VORuntimeOptions {
 
     logLevel?: string;
 
+    eventLimit?: number;
+
 }
 
 const DefaultVORuntimeOptions: VORuntimeOptions = {
     pageLimit: Number.MAX_SAFE_INTEGER,
-    checkFinishInterval: 300
+    checkFinishInterval: 300,
+    eventLimit: 20
 };
 
 export class VORuntime {
@@ -60,10 +63,6 @@ export class VORuntime {
     private options: VORuntimeOptions = {};
 
     private logger: log4js.Logger;
-
-    private processingCount = 0;
-
-    private processedCount = 0;
 
     private bus: EventEmitter;
 
@@ -202,15 +201,6 @@ export class VORuntime {
         return null;
     }
 
-    private _upProcessingCount(): void {
-        this.processedCount += 1;
-        this.processingCount += 1;
-    }
-
-    private _downProcessingCount(): void {
-        this.processingCount -= 1;
-    }
-
     /**
      * check the uri wether queued, return true means has been queued
      * 
@@ -218,27 +208,36 @@ export class VORuntime {
      */
     private async _isUriQueued(uri: string): Promise<boolean> {
         // with status, means queued
-        return (await this._store.status(uri)) != null;
+        const s = await this._store.status(uri);
+        return (s == ResourceProcessStatus.PROCESSED || s == ResourceProcessStatus.PROCESSING);
+    }
+
+    private async _setResourceNew(r: Resource): Promise<void> {
+        await this._store.save(r.uri, ResourceProcessStatus.NEW);
+    }
+
+    private async _setResourceLock(r: Resource): Promise<void> {
+        await this._store.save(r.uri, ResourceProcessStatus.LOCKED);
     }
 
     private async _setResourceProcessing(r: Resource): Promise<void> {
         await this._store.save(r.uri, ResourceProcessStatus.PROCESSING);
-        this._upProcessingCount();
     }
 
     private async _setResourceProcessed(r: Resource): Promise<void> {
         await this._store.save(r.uri, ResourceProcessStatus.PROCESSED);
-        this._downProcessingCount();
     }
 
-
-    private _getProcessingCount(): number {
-        return this.processingCount;
+    private async _getProcessingCount(): Promise<number> {
+        return (await this._store.query(ResourceProcessStatus.PROCESSING)).length;
     }
 
     private async onQueueResource(resource: Resource): Promise<void> {
-        if (this.processedCount < this.options.pageLimit) { // apply page limit 
+        await this._setResourceLock(resource); // lock first
+        const totalReqCount = await this._store.getRequestCount();
+        if (totalReqCount < this.options.pageLimit) { // apply page limit 
             if (!await this._isUriQueued(resource.uri)) {
+                await this._store.setRequestCount(totalReqCount + 1);
                 await this._setResourceProcessing(resource);
                 this.bus.emit("onContentRequest", resource);
             }
@@ -270,6 +269,7 @@ export class VORuntime {
 
         const parser = await this._getParser({ uri: resource.uri, type: originalContent.type });
         const newContent = new Content();
+
         newContent.resource = resource;
         newContent.blob = originalContent.content;
         newContent.type = originalContent.type; // fallback type
@@ -317,50 +317,66 @@ export class VORuntime {
 
     }
 
-    private async _startCheckFinished(): Promise<void> {
+    private async scheduleRunner(): Promise<void> {
 
         const task = setInterval(async (): Promise<void> => {
-            if (this._getProcessingCount() == 0) {
-                const c = await this._store.query(ResourceProcessStatus.PROCESSING);
-                if (c.length == 0) {
+            const notProcessItems = await this._store.query(ResourceProcessStatus.NEW);
+
+            // some resource not be requested
+            if (notProcessItems.length > 0) {
+                take(notProcessItems, this.options.eventLimit).forEach(u => {
+                    this.bus.emit("onQueueResource", new Resource(u));
+                });
+            }
+
+            // all items has been requested
+            else {
+
+                const c = await this._getProcessingCount();
+                // no items still in processing
+                if (c == 0) {
                     clearInterval(task);
                     this.bus.emit("finished");
                     this.bus.removeAllListeners("finished");
                 }
             }
+
         }, this.options.checkFinishInterval);
 
 
     }
 
     /**
-     * add resource into runtime
+     * enqueue resource into runtime, runtime will schedule them ondemand
      * 
      * @param uri 
      */
-    public addResource(uri: string | string[]): void {
+    public async enqueueResource(uri: string | string[]): Promise<VORuntime> {
+
         if (isArray(uri)) {
-            uri.forEach(u => { this.addResource(u); });
+            await Promise.all(uri.map(u => this.enqueueResource(u)));
         } else {
-            const r = new Resource();
-            r.uri = uri;
-            this.bus.emit("onQueueResource", r); // push resource to bus
+            await this._setResourceNew(new Resource(uri));
         }
+
+        return this;
 
     }
 
     /**
-     * start at an entry uri
+     * start at entry uris, await it to wait all resource process finished
      * 
      * @param uri 
-     * @param cbOnFinished 
      */
-    public async startAt(uri: string | string[]): Promise<void> {
+    public async startAt(uri?: string | string[]): Promise<void> {
+
 
         // when start, add resource status 'NEW' from store
-        this.addResource(await this._store.query(ResourceProcessStatus.NEW));
-        this.addResource(uri);
-        this._startCheckFinished();
+        await this.enqueueResource(await this._store.query(ResourceProcessStatus.NEW));
+
+        if (uri) { await this.enqueueResource(uri); }
+
+        this.scheduleRunner();
 
         return new Promise(resolve => {
             // startAt function wiil be resolved on finished
