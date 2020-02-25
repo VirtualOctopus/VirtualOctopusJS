@@ -5,23 +5,20 @@ describe('Pooled Sender Test Suite', () => {
 
     it('should impl pool feature', async () => {
 
-        const limit = 10;
+        const limit = 15;
+
+        const reqCount = 100;
 
         class DemoPooledSender extends PooledVOSender {
 
             _current_req_num = 0
 
-            async retrieve(): Promise<RetrieveResponse> {
-                const release = await this.acquire();
-                return new Promise(resolve => {
-                    this._current_req_num++;
-                    expect(this._current_req_num <= limit).toBeTruthy();
-                    setTimeout(() => {
-                        release();
-                        this._current_req_num--;
-                        resolve({});
-                    }, 10);
-                });
+            async poolRetrieve(): Promise<RetrieveResponse> {
+                this._current_req_num++;
+                expect(this._current_req_num <= limit).toBeTruthy();
+                await new Promise(resolve => { setTimeout(() => { resolve(); }, 10); });
+                this._current_req_num--;
+                return {};
             }
 
             async accept(): Promise<boolean> {
@@ -34,8 +31,8 @@ describe('Pooled Sender Test Suite', () => {
 
         const reqs = [];
 
-        for (let i = 0; i < 100; i++) {
-            reqs.push(sender.retrieve());
+        for (let i = 0; i < reqCount; i++) {
+            reqs.push(sender.retrieve(""));
         }
 
         await Promise.all(reqs);
