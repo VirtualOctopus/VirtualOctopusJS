@@ -25,7 +25,7 @@ describe('VO Runtime Test Suite', () => {
         await r.destroy();
     });
 
-    it('should scrabe quotes', async () => {
+    it('should scrape quotes', async () => {
 
         let pages = 0;
         let quotes = [];
@@ -41,12 +41,12 @@ describe('VO Runtime Test Suite', () => {
             async extract($: CheerioStatic): Promise<ParseResult<any>> {
                 const links = map($(".pager a"), e => `http://quotes.toscrape.com${$(e).attr("href")}`);
                 const parsedObject = map($(".quote > .text"), e => $(e).text());
-                return { type: "object/quotelist", links, parsedObject };
+                return { type: "object/quote-list", links, parsedObject };
             }
 
         };
 
-        const QuoteListConsumer = createTypedVOConsumer("object/quotelist", async (content: Content<string[]>): Promise<void> => {
+        const QuoteListConsumer = createTypedVOConsumer("object/quote-list", async (content: Content<string[]>): Promise<void> => {
             pages++;
             quotes = quotes.concat(content.getContent());
         });

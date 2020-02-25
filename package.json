@@ -1,11 +1,12 @@
 {
   "name": "@virtualoctopusjs/virtualoctopusjs",
   "version": "0.0.21",
-  "description": "yet another crawler application for nodejs",
+  "description": "Virtual Octopus is used to discover the virtual world.",
   "main": "lib/index.js",
   "scripts": {
     "test": "jest --detectOpenHandles",
     "ts:build": "tsc",
+    "build": "npm run ts:build",
     "lint:fix": "eslint src/** --fix",
     "release": "standard-version --no-verify && git push --follow-tags origin master",
     "coverage": "npm test -- --coverage --no-cache"
@@ -35,7 +36,7 @@
     "cheerio": "^1.0.0-rc.3",
     "got": "^10.4.0",
     "lodash": "^4.17.15",
-    "log4js": "^6.1.1"
+    "log4js": "^6.1.2"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^8.3.4",
@@ -44,14 +45,14 @@
     "@types/lodash": "^4.14.149",
     "@typescript-eslint/eslint-plugin": "^2.16.0",
     "@typescript-eslint/parser": "^2.16.0",
-    "commitlint": "^8.3.5",
-    "eslint": "^6.8.0",
-    "husky": "^4.0.10",
-    "jest": "^24.9.0",
-    "standard-version": "^7.0.1",
-    "ts-jest": "^24.3.0",
-    "ts-node": "^8.6.2",
-    "typescript": "^3.7.5"
+    "commitlint": "^8",
+    "eslint": "^6",
+    "husky": "^4",
+    "jest": "^25",
+    "standard-version": "^7",
+    "ts-jest": "^25",
+    "ts-node": "^8",
+    "typescript": "^3"
   },
   "jest": {
     "testTimeout": 30000,

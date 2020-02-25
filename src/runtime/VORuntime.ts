@@ -37,8 +37,12 @@ export interface VORuntimeOptions {
 const DefaultVORuntimeOptions: VORuntimeOptions = {
     pageLimit: Number.MAX_SAFE_INTEGER,
     checkFinishInterval: 300,
-    eventLimit: 20
+    eventLimit: 20,
+    logLevel: log4js.levels.ERROR.levelStr,
 };
+
+
+const { VO_LOG_LEVEL } = process.env;
 
 export class VORuntime {
 
@@ -50,7 +54,7 @@ export class VORuntime {
 
         this._store = this.options.store || new MemoryStore(); // default memory store
 
-        this.logger.level = this.options.logLevel || process.env.VO_LOG_LEVEL || log4js.levels.ERROR.levelStr; // default log level
+        this.logger.level = VO_LOG_LEVEL || this.options.logLevel; // default log level
 
         this._setupBus();
 
@@ -73,29 +77,19 @@ export class VORuntime {
     private senders: Array<VOSender> = [];
 
     public with(p: VOPlugin | ArrayLike<VOPlugin>): VORuntime {
-        if (Array.isArray(p)) {
-            p.forEach(ap => this.with(ap));
-        }
+        if (Array.isArray(p)) { p.forEach(ap => this.with(ap)); }
         else if (p instanceof VOPlugin) {
 
             switch (p.getKind()) {
                 case PluginKind.Consumer:
-                    if (p instanceof VOConsumer) {
-                        this.addConsumer(p);
-                    }
-                    break;
+                    if (p instanceof VOConsumer) { this.addConsumer(p); } break;
                 case PluginKind.Parser:
-                    if (p instanceof VOParser) {
-                        this.addParser(p);
-                    }
-                    break;
+                    if (p instanceof VOParser) { this.addParser(p); } break;
                 case PluginKind.Sender:
-                    if (p instanceof VOSender) {
-                        this.addSender(p);
-                    }
-                    break;
-                default:
-                    break;
+                    if (p instanceof VOSender) { this.addSender(p); } break;
+                case PluginKind.ResourceStore:
+                    if (p instanceof Store) { this._store = p; } break;
+                default: break;
             }
 
         }

@@ -1,9 +1,14 @@
 import { ResourceProcessStatus } from "../models";
+import { VOPlugin, PluginKind } from "../base";
 
 /**
  * Resource Store
  */
-export abstract class Store {
+export abstract class Store extends VOPlugin {
+
+    getKind(): PluginKind {
+        return PluginKind.ResourceStore;
+    }
 
     /**
      * save data
