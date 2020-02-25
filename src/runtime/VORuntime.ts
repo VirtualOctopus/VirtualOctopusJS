@@ -351,7 +351,7 @@ export class VORuntime {
 
     private async scheduleRunner(): Promise<void> {
 
-        const { eventLimit } = this.options;
+        const { eventLimit, checkFinishInterval } = this.options;
 
         const task = setInterval(async (): Promise<void> => {
             const lockedCount = await this._getLockedCount();
@@ -386,13 +386,13 @@ export class VORuntime {
                 }
             }
 
-        }, this.options.checkFinishInterval);
+        }, checkFinishInterval);
 
 
     }
 
     /**
-     * enqueue resource into runtime, runtime will schedule them ondemand
+     * enqueue resource into runtime, runtime will schedule them on-demand
      * 
      * @param uri 
      */

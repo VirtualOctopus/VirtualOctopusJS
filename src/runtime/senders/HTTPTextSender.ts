@@ -30,9 +30,9 @@ export class DefaultPooledHTTPTextSender extends PooledVOSender {
     }
 
     async retrieve(uri: string): Promise<RetrieveResponse> {
-        const relase = await this.acquire();
+        const release = await this.acquire();
         const response = await got(uri);
-        relase();
+        release();
         return { content: Buffer.from(response.body, "utf8"), type: response.headers["content-type"] };
     }
 
