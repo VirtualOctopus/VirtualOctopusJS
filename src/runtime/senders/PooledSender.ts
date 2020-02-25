@@ -1,12 +1,9 @@
 import { VOSender, RetrieveResponse } from "./VOSender";
 import { Semaphore } from "await-semaphore";
-import log4js, { Logger } from 'log4js';
 
 interface ReleaseFunc {
     (): void;
 }
-
-const _logger = log4js.getLogger("VO.PooledVOSender");
 
 /**
  * PooledVOSender
