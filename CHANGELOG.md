@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.24](https://github.com/VirtualOctopus/VirtualOctopusJS/compare/v0.0.23...v0.0.24) (2020-02-25)
+
+
+### Features
+
+* refactor pool sender ([3dbcbfe](https://github.com/VirtualOctopus/VirtualOctopusJS/commit/3dbcbfef3ce8f6b23a2e8573d252b591429b872b))
+
 ### [0.0.23](https://github.com/VirtualOctopus/VirtualOctopusJS/compare/v0.0.22...v0.0.23) (2020-02-25)
 
 
