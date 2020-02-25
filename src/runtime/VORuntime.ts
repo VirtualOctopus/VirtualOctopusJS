@@ -320,8 +320,6 @@ export class VORuntime {
 
         }
 
-        this._setResourceProcessed(resource);
-
         this.bus.emit("onContentParsed", newContent);
 
     }
@@ -335,13 +333,17 @@ export class VORuntime {
 
         const cs = await this._getConsumers({ uri: content.resource.uri, type: content.type });
 
-        cs.forEach(async c => {
-            try {
-                await c.consume(content);
-            } catch (error) {
-                this.logger.error(`consume ${content.resource.uri} failed: ${error}`);
-            }
-        });
+        await Promise.all(
+            cs.map(async c => {
+                try {
+                    await c.consume(content);
+                } catch (error) {
+                    this.logger.error(`consume ${content.resource.uri} failed: ${error}`);
+                }
+            })
+        );
+
+        this._setResourceProcessed(content.resource);
 
     }
 
@@ -423,7 +425,7 @@ export class VORuntime {
         this.scheduleRunner();
 
         return new Promise(resolve => {
-            // startAt function wiil be resolved on finished
+            // startAt function will be resolved on finished
             this.bus.addListener("finished", () => {
                 resolve();
             });
