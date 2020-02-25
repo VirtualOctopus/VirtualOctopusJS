@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.23](https://github.com/VirtualOctopus/VirtualOctopusJS/compare/v0.0.22...v0.0.23) (2020-02-25)
+
+
+### Features
+
+* make resource store response quickly ([91700a8](https://github.com/VirtualOctopus/VirtualOctopusJS/commit/91700a84e1a483c360e04ddb17ee9553dc4af44c))
+
 ### [0.0.22](https://github.com/VirtualOctopus/VirtualOctopusJS/compare/v0.0.21...v0.0.22) (2020-02-25)
 
 ### [0.0.21](https://github.com/VirtualOctopus/VirtualOctopusJS/compare/v0.0.20...v0.0.21) (2020-02-23)
