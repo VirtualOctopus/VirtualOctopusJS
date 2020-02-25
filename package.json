@@ -1,6 +1,6 @@
 {
   "name": "@virtualoctopusjs/virtualoctopusjs",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "description": "Virtual Octopus is used to discover the virtual world.",
   "main": "lib/index.js",
   "scripts": {
