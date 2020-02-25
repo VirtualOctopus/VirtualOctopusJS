@@ -273,12 +273,14 @@ export class VORuntime {
                 const content = await sender.retrieve(resource.uri);
                 this.bus.emit("onContentReceived", resource, content);
             } catch (error) {
+                // error here
                 this.logger.error(`fetch ${resource.uri} failed: ${error}`);
                 await this._setResourceProcessed(resource);
             }
 
         } else {
             // not found sender
+            // error here
             this.logger.error(`not found sender for uri: ${resource.uri}`);
             await this._setResourceProcessed(resource);
         }
@@ -343,7 +345,7 @@ export class VORuntime {
             })
         );
 
-        this._setResourceProcessed(content.resource);
+        await this._setResourceProcessed(content.resource);
 
     }
 
