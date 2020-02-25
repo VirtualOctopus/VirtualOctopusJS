@@ -29,8 +29,9 @@ export abstract class Store extends VOPlugin {
      * query uri by status
      * 
      * @param status 
+     * @param maxCount set max count to make query fast response
      */
-    abstract query(status: ResourceProcessStatus): Promise<string[]>;
+    abstract query(status: ResourceProcessStatus, maxCount?: number): Promise<string[]>;
 
     private _reqCount = 0;
 

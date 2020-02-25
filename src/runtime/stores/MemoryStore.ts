@@ -23,13 +23,12 @@ export class MemoryStore extends Store {
         }
     }
 
-    async query(status: ResourceProcessStatus): Promise<string[]> {
+    async query(status: ResourceProcessStatus, maxCount = Number.MAX_SAFE_INTEGER): Promise<string[]> {
         let rt = [];
-        this._store.forEach((s, u) => {
-            if (s == status) {
-                rt = rt.concat(u);
-            }
-        });
+        for (const entry of this._store) {
+            if (entry[1] == status) { rt = rt.concat(entry[0]); }
+            if (rt.length >= maxCount) { break; }
+        }
         return rt;
     }
 

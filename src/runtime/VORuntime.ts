@@ -37,7 +37,7 @@ export interface VORuntimeOptions {
 const DefaultVORuntimeOptions: VORuntimeOptions = {
     pageLimit: Number.MAX_SAFE_INTEGER,
     checkFinishInterval: 300,
-    eventLimit: 20,
+    eventLimit: 100,
     logLevel: log4js.levels.ERROR.levelStr,
 };
 
@@ -351,7 +351,7 @@ export class VORuntime {
             const lockedCount = await this._getLockedCount();
             const inProcessingCount = await this._getProcessingCount();
             const totalInRuntimeCount = lockedCount + inProcessingCount;
-            const notProcessItems = await this._store.query(ResourceProcessStatus.NEW);
+            const notProcessItems = await this._store.query(ResourceProcessStatus.NEW, eventLimit);
 
             // some resource not be requested
             if (notProcessItems.length > 0) {
