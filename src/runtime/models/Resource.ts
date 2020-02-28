@@ -28,15 +28,4 @@ export class Resource {
 
     status: ResourceProcessStatus = ResourceProcessStatus.NEW
 
-    /**
-     * setInProcessing
-     */
-    public setInProcessing(): void {
-        this.status = ResourceProcessStatus.PROCESSING;
-    }
-
-    public setProcessed(): void {
-        this.status = ResourceProcessStatus.PROCESSED;
-    }
-
 }

@@ -22,17 +22,17 @@ export class DefaultHTTPTextSender extends VOSender {
 
 }
 
-
+/**
+ * DefaultPooledHTTPTextSender
+ */
 export class DefaultPooledHTTPTextSender extends PooledVOSender {
 
     async accept(): Promise<boolean> {
         return true;
     }
 
-    async retrieve(uri: string): Promise<RetrieveResponse> {
-        const release = await this.acquire();
+    async poolRetrieve(uri: string): Promise<RetrieveResponse> {
         const response = await got(uri);
-        release();
         return { content: Buffer.from(response.body, "utf8"), type: response.headers["content-type"] };
     }
 

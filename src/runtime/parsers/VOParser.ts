@@ -1,4 +1,5 @@
 import { VOPlugin, PluginKind } from "../base/VOPlugin";
+import { string } from "@oclif/command/lib/flags";
 
 export interface ParserAcceptOptions {
     uri?: string;
@@ -34,9 +35,19 @@ export abstract class VOParser<T = any> extends VOPlugin {
 
 }
 
-export const createVOParser = <T>(accept: ParserAcceptFunc, parse: ParserParseFunc<T>, Clazz = VOParser): VOParser<T> => {
-    return new class extends Clazz {
+export const DefaultAcceptAllFunc: ParserAcceptFunc = async (): Promise<boolean> => true;
+
+export const EmptyParserParseFunc: ParserParseFunc<any> = async (blob: Buffer): Promise<ParseResult<any>> => {
+    return {};
+};
+
+export const createVOParser = <T>(accept: ParserAcceptFunc = DefaultAcceptAllFunc, parse: ParserParseFunc<T>, parentClass = VOParser): VOParser<T> => {
+    return new class extends parentClass {
         accept = accept
         parse = parse
     };
+};
+
+export const createTypedVOParser = <T>(type: string, parse: ParserParseFunc<T>, parentClass = VOParser): VOParser<T> => {
+    return createVOParser(async (opt: ParserAcceptOptions): Promise<boolean> => opt.type == type, parse, parentClass);
 };

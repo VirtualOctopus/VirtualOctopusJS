@@ -1,10 +1,9 @@
 import { VORuntime, createVORuntime } from './VORuntime';
-import { ParseResult, ParserAcceptOptions } from './parsers/VOParser';
 import { map } from "lodash";
 import { Content } from './models';
-import { DefaultHTTPTextSender } from './senders/HTTPTextSender';
-import { AbstractCheerIOParser } from './parsers/AbstractCheerIOParser';
-import { createTypedVOConsumer } from './consumers/index';
+import { DefaultHTTPTextSender } from './senders';
+import { AbstractCheerIOParser, ParseResult, ParserAcceptOptions, createCheerioParser } from './parsers';
+import { createTypedVOConsumer } from './consumers';
 
 describe('VO Runtime Test Suite', () => {
 
@@ -31,27 +30,26 @@ describe('VO Runtime Test Suite', () => {
         let quotes = [];
         const r = await createVORuntime({ pageLimit: 2, checkFinishInterval: 100 });
 
-        const QuoteListParser = new class extends AbstractCheerIOParser {
-
-            async accept({ uri }: ParserAcceptOptions): Promise<boolean> {
+        const QuoteListParser = createCheerioParser(
+            async ({ uri }: ParserAcceptOptions): Promise<boolean> => {
                 // allow all types response from senders
                 return (uri == "http://quotes.toscrape.com/" || uri.startsWith("http://quotes.toscrape.com/page/"));
-            }
-
-            async extract($: CheerioStatic): Promise<ParseResult<any>> {
+            },
+            async ($: CheerioStatic): Promise<ParseResult<any>> => {
                 const links = map($(".pager a"), e => `http://quotes.toscrape.com${$(e).attr("href")}`);
                 const parsedObject = map($(".quote > .text"), e => $(e).text());
                 return { type: "object/quote-list", links, parsedObject };
             }
-
-        };
+        );
 
         const QuoteListConsumer = createTypedVOConsumer("object/quote-list", async (content: Content<string[]>): Promise<void> => {
             pages++;
             quotes = quotes.concat(content.getContent());
         });
 
-        r.with([QuoteListParser, QuoteListConsumer, new DefaultHTTPTextSender()]);
+        const HTTPSender = new DefaultHTTPTextSender();
+
+        r.with([QuoteListParser, QuoteListConsumer, HTTPSender]);
 
         try {
             await r.startAt("http://quotes.toscrape.com/page/1/");
