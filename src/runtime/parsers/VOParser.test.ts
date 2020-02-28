@@ -1,4 +1,4 @@
-import { createVOParser, DefaultAcceptAllFunc, EmptyParserParseFunc } from ".";
+import { createVOParser, ParserDefaultAcceptAllFunc, ParserDefaultEmptyParseFunc } from ".";
 import { createTypedVOParser } from "./VOParser";
 
 
@@ -6,7 +6,7 @@ import { createTypedVOParser } from "./VOParser";
 describe('VOParser Test Suite', () => {
 
     it('should accept', async () => {
-        const parser = createVOParser(DefaultAcceptAllFunc, EmptyParserParseFunc);
+        const parser = createVOParser(ParserDefaultAcceptAllFunc, ParserDefaultEmptyParseFunc);
         expect(await parser.accept({ uri: "http://xxx/qqq" })).toBeTruthy();
 
         const parser2 = createVOParser(async ({ uri, type }) => {
@@ -17,7 +17,7 @@ describe('VOParser Test Suite', () => {
                 return true;
             }
             return false;
-        }, EmptyParserParseFunc);
+        }, ParserDefaultEmptyParseFunc);
 
         expect(await parser2.accept({ uri: "http://xxx/123456" })).toBeTruthy();
         expect(await parser2.accept({ uri: "http://xxx/12345" })).toBeFalsy();
@@ -25,7 +25,7 @@ describe('VOParser Test Suite', () => {
         expect(await parser2.accept({ type: "type1" })).toBeTruthy();
         expect(await parser2.accept({ type: "12345" })).toBeFalsy();
 
-        const parser3 = createTypedVOParser("type1", EmptyParserParseFunc);
+        const parser3 = createTypedVOParser("type1", ParserDefaultEmptyParseFunc);
 
         expect(await parser3.accept({ type: "type1" })).toBeTruthy();
         expect(await parser3.accept({ type: "12345" })).toBeFalsy();

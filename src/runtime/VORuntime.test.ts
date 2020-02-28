@@ -1,7 +1,7 @@
 import { VORuntime, createVORuntime } from './VORuntime';
 import { map } from "lodash";
 import { ResourceProcessStatus } from './models';
-import { DefaultHTTPTextSender } from './senders';
+import { DefaultBasicHTTPSender } from './senders';
 import { createCheerioParser } from './parsers';
 import { createTypedVOConsumer } from './consumers';
 import { MemoryStore } from './stores';
@@ -52,7 +52,7 @@ describe('VO Runtime Test Suite', () => {
             }
         );
 
-        const HTTPSender = new DefaultHTTPTextSender();
+        const HTTPSender = new DefaultBasicHTTPSender();
 
         const store = new MemoryStore();
 

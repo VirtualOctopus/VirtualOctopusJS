@@ -34,13 +34,13 @@ export abstract class VOParser<T = any> extends VOPlugin {
 
 }
 
-export const DefaultAcceptAllFunc: ParserAcceptFunc = async (): Promise<boolean> => true;
+export const ParserDefaultAcceptAllFunc: ParserAcceptFunc = async (): Promise<boolean> => true;
 
-export const EmptyParserParseFunc: ParserParseFunc<any> = async (): Promise<ParseResult<any>> => {
+export const ParserDefaultEmptyParseFunc: ParserParseFunc<any> = async (): Promise<ParseResult<any>> => {
     return {};
 };
 
-export const createVOParser = <T>(accept: ParserAcceptFunc = DefaultAcceptAllFunc, parse: ParserParseFunc<T>, parentClass = VOParser): VOParser<T> => {
+export const createVOParser = <T>(accept: ParserAcceptFunc = ParserDefaultAcceptAllFunc, parse: ParserParseFunc<T>, parentClass = VOParser): VOParser<T> => {
     return new class extends parentClass {
         accept = accept
         parse = parse

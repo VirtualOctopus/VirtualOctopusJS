@@ -1,4 +1,4 @@
-import { ParseResult, ParserAcceptFunc, ParserParseFunc, VOParser, DefaultAcceptAllFunc } from './VOParser';
+import { ParseResult, ParserDefaultAcceptAllFunc } from './VOParser';
 import HTTPTextParser from './HTTPTextParser';
 import cheerio from "cheerio";
 
@@ -19,7 +19,7 @@ export abstract class AbstractCheerIOParser<T = any> extends HTTPTextParser<T> {
 
 }
 
-export const createCheerioParser = <T>(accept = DefaultAcceptAllFunc, extract: CheerioParserExtractFunc<T>): AbstractCheerIOParser<T> => {
+export const createCheerioParser = <T>(accept = ParserDefaultAcceptAllFunc, extract: CheerioParserExtractFunc<T>): AbstractCheerIOParser<T> => {
     return new class extends AbstractCheerIOParser {
         accept = accept
         extract = extract
