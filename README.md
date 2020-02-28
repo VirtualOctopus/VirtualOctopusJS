@@ -10,6 +10,10 @@
 
 Virtual Octopus is used to discover the virtual world.
 
+## Plugins
+
+![Plugins Image](https://res.cloudinary.com/digf90pwi/image/upload/v1582864445/VOJS_COMPONENTS_jdohj5.png)
+
 ## Document To Be Done.
 
 ## [CHANGELOG](./CHANGELOG.md)
