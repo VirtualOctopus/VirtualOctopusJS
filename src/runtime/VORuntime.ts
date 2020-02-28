@@ -6,8 +6,7 @@ import { VOConsumer, ConsumerAcceptOptions } from "./consumers/VOConsumer";
 import { VOSender, RetrieveResponse } from "./senders/VOSender";
 import { VOPlugin, PluginKind } from "./base/VOPlugin";
 import { uniq, isArray, take } from "lodash";
-import { Store } from "./stores";
-import { MemoryStore } from "./stores/MemoryStore";
+import { Store, MemoryStore } from ".";
 
 type VORuntimeReadyCallback = (runtime?: VORuntime, error?: Error) => void;
 
@@ -222,6 +221,10 @@ export class VORuntime {
         await this._store.save(r.uri, ResourceProcessStatus.PROCESSED);
     }
 
+    private async _setResourceIgnored(r: Resource): Promise<void> {
+        await this._store.save(r.uri, ResourceProcessStatus.IGNORED);
+    }
+
     private async _getProcessingCount(): Promise<number> {
         return (await this._store.query(ResourceProcessStatus.PROCESSING)).length;
     }
@@ -246,7 +249,7 @@ export class VORuntime {
                 this.bus.emit("onContentRequest", resource);
             }
         } else {
-            await this._setResourceProcessed(resource);
+            await this._setResourceIgnored(resource);
             this.logger.info(`page limit exceeded, uri: %s ignore.`, resource.uri);
         }
 

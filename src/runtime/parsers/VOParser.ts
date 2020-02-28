@@ -37,7 +37,7 @@ export abstract class VOParser<T = any> extends VOPlugin {
 
 export const DefaultAcceptAllFunc: ParserAcceptFunc = async (): Promise<boolean> => true;
 
-export const EmptyParserParseFunc: ParserParseFunc<any> = async (blob: Buffer): Promise<ParseResult<any>> => {
+export const EmptyParserParseFunc: ParserParseFunc<any> = async (): Promise<ParseResult<any>> => {
     return {};
 };
 

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-disable @typescript-eslint/ban-ts-ignore */
 import { PooledVOSender } from "./PooledSender";
 import { RetrieveResponse } from "./VOSender";
 
@@ -29,15 +31,38 @@ describe('Pooled Sender Test Suite', () => {
 
         const sender = new DemoPooledSender(limit);
 
-        const reqs = [];
+        const requests = [];
 
         for (let i = 0; i < reqCount; i++) {
-            reqs.push(sender.retrieve(""));
+            requests.push(sender.retrieve(""));
         }
 
-        await Promise.all(reqs);
+        await Promise.all(requests);
 
         expect(sender._current_req_num).toBe(0);
+
+    });
+
+    it('should throw error & sem works', async () => {
+
+        const concurrent = 5;
+
+        const s1 = new class extends PooledVOSender {
+            async accept() { return true; }
+        }(concurrent);
+        let e = null;
+
+        try {
+            await s1.retrieve("anything");
+        } catch (error) {
+            e = error;
+        }
+
+        // error raised
+        expect(e instanceof Error).toBeTruthy();
+
+        // @ts-ignore
+        expect(s1.sem.count).toBe(concurrent); // sem are release though throw error
 
     });
 

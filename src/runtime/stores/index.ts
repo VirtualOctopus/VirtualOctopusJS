@@ -57,3 +57,5 @@ export abstract class Store extends VOPlugin {
     abstract release(): Promise<void>;
 
 }
+
+export * from "./MemoryStore";

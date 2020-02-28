@@ -3,7 +3,7 @@ import { Content } from "../models";
 
 export * from "./VOConsumer";
 
-export const createTypedVOConsumer = <T>(type: string, consumer: (content: Content<T>) => Promise<void>): VOConsumer<T> => {
+export const createTypedVOConsumer = <T = any>(type: string, consumer: (content: Content<T>) => Promise<void>): VOConsumer<T> => {
 
     return new class extends VOConsumer {
 

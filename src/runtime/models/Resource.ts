@@ -15,7 +15,11 @@ export enum ResourceProcessStatus {
     /**
      * this resource is locked, maybe ready to process
      */
-    LOCKED = "LOCKED"
+    LOCKED = "LOCKED",
+    /**
+     * error or page limited
+     */
+    IGNORED = "IGNORED",
 }
 
 export class Resource {
