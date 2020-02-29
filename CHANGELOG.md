@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.25](https://github.com/VirtualOctopus/VirtualOctopusJS/compare/v0.0.24...v0.0.25) (2020-02-29)
+
+
+### Features
+
+* abs tika server v1 ([0fd839e](https://github.com/VirtualOctopus/VirtualOctopusJS/commit/0fd839edfccaba7dd4c7721e97b51834741e7368))
+
+
+### Bug Fixes
+
+* test ([630f9c2](https://github.com/VirtualOctopus/VirtualOctopusJS/commit/630f9c2f8494c2cd6451f42588317f90abe1561a))
+
 ### [0.0.24](https://github.com/VirtualOctopus/VirtualOctopusJS/compare/v0.0.23...v0.0.24) (2020-02-25)
 
 
