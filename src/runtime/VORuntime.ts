@@ -7,6 +7,7 @@ import { VOSender, RetrieveResponse } from "./senders/VOSender";
 import { VOPlugin, PluginKind } from "./base/VOPlugin";
 import { uniq, isArray, take } from "lodash";
 import { Store, MemoryStore } from ".";
+import * as uuid from "uuid";
 
 type VORuntimeReadyCallback = (runtime?: VORuntime, error?: Error) => void;
 
@@ -115,9 +116,16 @@ export class VORuntime {
      * destroy runtime & db connection
      */
     public async destroy(): Promise<void> {
-        if (this._store) {
-            return await this._store.release();
-        }
+        return new Promise(res => {
+            setTimeout(async () => {
+                if ((await this._getTotalInRuntimeCount()) == 0) { // all items processed
+                    if (this._store) {
+                        await this._store.release();
+                    }
+                    res();
+                }
+            }, this.options.checkFinishInterval);
+        });
     }
 
     /**
@@ -233,6 +241,10 @@ export class VORuntime {
         return (await this._store.query(ResourceProcessStatus.LOCKED)).length;
     }
 
+    private async _getTotalInRuntimeCount(): Promise<number> {
+        return (await this._getLockedCount()) + (await this._getProcessingCount());
+    }
+
     /**
      * onQueueResource, prepare send request
      * 
@@ -346,14 +358,12 @@ export class VORuntime {
 
     }
 
-    private async scheduleRunner(): Promise<void> {
+    private async scheduleRunner(taskId: string): Promise<void> {
 
         const { eventLimit, checkFinishInterval } = this.options;
 
         const task = setInterval(async (): Promise<void> => {
-            const lockedCount = await this._getLockedCount();
-            const inProcessingCount = await this._getProcessingCount();
-            const totalInRuntimeCount = lockedCount + inProcessingCount;
+            const totalInRuntimeCount = await this._getTotalInRuntimeCount();
             const notProcessItems = await this._store.query(ResourceProcessStatus.NEW, eventLimit);
 
             // some resource not be requested
@@ -378,8 +388,7 @@ export class VORuntime {
                 // no items still in processing
                 if (totalInRuntimeCount == 0) {
                     clearInterval(task);
-                    this.bus.emit("finished");
-                    this.bus.removeAllListeners("finished");
+                    this.bus.emit(taskId);
                 }
             }
 
@@ -421,13 +430,13 @@ export class VORuntime {
 
         if (uri) { await this.enqueueResource(uri); }
 
-        this.scheduleRunner();
+        const taskId = uuid.v4();
+
+        this.scheduleRunner(taskId);
 
         return new Promise(resolve => {
             // startAt function will be resolved on finished
-            this.bus.addListener("finished", () => {
-                resolve();
-            });
+            this.bus.once(taskId, () => { resolve(); });
         });
 
     }

@@ -32,13 +32,15 @@
     "cheerio": "^1.0.0-rc.3",
     "got": "^10.4.0",
     "lodash": "^4.17.15",
-    "log4js": "^6.1.2"
+    "log4js": "^6.1.2",
+    "uuid": "^7.0.1"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^8.3.4",
     "@types/cheerio": "^0.22.16",
     "@types/jest": "^24.9.0",
     "@types/lodash": "^4.14.149",
+    "@types/uuid": "^7.0.0",
     "@typescript-eslint/eslint-plugin": "^2.16.0",
     "@typescript-eslint/parser": "^2.16.0",
     "commitlint": "^8",
