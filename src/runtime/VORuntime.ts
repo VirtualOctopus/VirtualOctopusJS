@@ -36,7 +36,7 @@ export interface VORuntimeOptions {
 
 const DefaultVORuntimeOptions: VORuntimeOptions = {
     pageLimit: Number.MAX_SAFE_INTEGER,
-    checkFinishInterval: 300,
+    checkFinishInterval: 500,
     eventLimit: 100,
     logLevel: log4js.levels.ERROR.levelStr,
 };
@@ -117,11 +117,12 @@ export class VORuntime {
      */
     public async destroy(): Promise<void> {
         return new Promise(res => {
-            setTimeout(async () => {
+            const task = setInterval(async () => {
                 if ((await this._getTotalInRuntimeCount()) == 0) { // all items processed
                     if (this._store) {
                         await this._store.release();
                     }
+                    clearInterval(task);
                     res();
                 }
             }, this.options.checkFinishInterval);
@@ -202,17 +203,6 @@ export class VORuntime {
         return null;
     }
 
-    /**
-     * check the uri wether queued, return true means has been queued
-     * 
-     * @param uri 
-     */
-    private async _isUriQueued(uri: string): Promise<boolean> {
-        // with status, means queued
-        const s = await this._store.status(uri);
-        return (s == ResourceProcessStatus.PROCESSED || s == ResourceProcessStatus.PROCESSING);
-    }
-
     private async _setResourceNew(r: Resource): Promise<void> {
         await this._store.save(r.uri, ResourceProcessStatus.NEW);
     }
@@ -255,11 +245,9 @@ export class VORuntime {
         const totalReqCount = await this._store.getRequestCount();
 
         if (totalReqCount < this.options.pageLimit) { // page limit 
-            if (!(await this._isUriQueued(resource.uri))) {
-                await this._store.setRequestCount(totalReqCount + 1);
-                await this._setResourceProcessing(resource);
-                this.bus.emit("onContentRequest", resource);
-            }
+            await this._store.setRequestCount(totalReqCount + 1);
+            await this._setResourceProcessing(resource);
+            this.bus.emit("onContentRequest", resource);
         } else {
             await this._setResourceIgnored(resource);
             this.logger.info(`page limit exceeded, uri: %s ignore.`, resource.uri);
@@ -368,6 +356,7 @@ export class VORuntime {
 
             // some resource not be requested
             if (notProcessItems.length > 0) {
+
                 // in processing item less than event limit
                 if (totalInRuntimeCount < eventLimit) {
 
@@ -424,13 +413,12 @@ export class VORuntime {
      */
     public async startAt(uri?: string | string[]): Promise<void> {
 
-
         // when start, add resource status 'NEW' from store
         await this.enqueueResource(await this._store.query(ResourceProcessStatus.NEW));
 
         if (uri) { await this.enqueueResource(uri); }
 
-        const taskId = uuid.v4();
+        const taskId = uuid.v4(); // generate a taskId
 
         this.scheduleRunner(taskId);
 
