@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.26](https://github.com/VirtualOctopus/VirtualOctopusJS/compare/v0.0.25...v0.0.26) (2020-03-01)
+
+
+### Bug Fixes
+
+* finished on consumer not end ([79e2d46](https://github.com/VirtualOctopus/VirtualOctopusJS/commit/79e2d46a66603503f9c63172851d7f7ff2428024))
+
 ### [0.0.25](https://github.com/VirtualOctopus/VirtualOctopusJS/compare/v0.0.24...v0.0.25) (2020-02-29)
 
 
