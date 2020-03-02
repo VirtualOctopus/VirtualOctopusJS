@@ -2,7 +2,6 @@
 
 ![Node CI](https://github.com/VirtualOctopus/VirtualOctopusJS/workflows/Node%20CI/badge.svg)
 [![codecov](https://codecov.io/gh/VirtualOctopus/VirtualOctopusJS/branch/master/graph/badge.svg)](https://codecov.io/gh/VirtualOctopus/VirtualOctopusJS)
-[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/VirtualOctopus/VirtualOctopusJS.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/VirtualOctopus/VirtualOctopusJS/context:javascript)
 ![License](https://img.shields.io/npm/l/@virtualoctopusjs/virtualoctopusjs)
 
 
