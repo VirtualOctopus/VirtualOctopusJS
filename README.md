@@ -1,4 +1,4 @@
-# <img src="https://res.cloudinary.com/digf90pwi/image/upload/v1582868666/octopus_waphnu.png" width="100px"> Virtual Octopus JS
+# <img src="https://res.cloudinary.com/digf90pwi/image/upload/v1582868666/octopus_waphnu.png" width="25px"> Virtual Octopus JS
 
 ![Node CI](https://github.com/VirtualOctopus/VirtualOctopusJS/workflows/Node%20CI/badge.svg)
 [![codecov](https://codecov.io/gh/VirtualOctopus/VirtualOctopusJS/branch/master/graph/badge.svg)](https://codecov.io/gh/VirtualOctopus/VirtualOctopusJS)
