@@ -6,6 +6,16 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mariadb:10.3
+        env:
+          MYSQL_DATABASE: vo
+          MYSQL_USER: vo
+          MYSQL_PASSWORD: vo
+        ports:
+          - 3306:3306
+
     strategy:
       matrix:
         node-version: [10.x, 12.x]
@@ -16,12 +26,6 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-
-    - uses: mirromutth/mysql-action@v1.1
-      with:
-        mysql database: 'vo'
-        mysql user: 'vo'
-        mysql password: 'vo'
         
     - name: npm install, build, and test
       run: |
@@ -33,6 +37,7 @@ jobs:
         MYSQL_USER: vo
         MYSQL_PASSWORD: vo
         MYSQL_DATABASE: vo
+        
     - name: upload coverage
       uses: codecov/codecov-action@v1
       with: 
