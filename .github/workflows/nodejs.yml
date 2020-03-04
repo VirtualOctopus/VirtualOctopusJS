@@ -15,6 +15,7 @@ jobs:
           MYSQL_PASSWORD: vo
         ports:
           - 3306/tcp
+        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
 
     strategy:
       matrix:
@@ -34,7 +35,6 @@ jobs:
         npm run coverage
       env:
         CI: true
-        MYSQL_HOST: mysql
         MYSQL_USER: vo
         MYSQL_PASSWORD: vo
         MYSQL_DATABASE: vo
