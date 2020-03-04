@@ -5,6 +5,7 @@ export enum PluginKind {
     Parser,
     Sender,
     ResourceStore,
+    ErrorConsumer,
 }
 
 export abstract class VOPlugin {

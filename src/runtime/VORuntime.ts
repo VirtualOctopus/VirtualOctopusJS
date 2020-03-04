@@ -2,7 +2,7 @@ import { Resource, Content, ResourceProcessStatus } from './models/index';
 import EventEmitter from "events";
 import { VOParser, ParserAcceptOptions } from "./parsers/VOParser";
 import log4js from "log4js";
-import { VOConsumer, ConsumerAcceptOptions } from "./consumers/VOConsumer";
+import { VOConsumer, ConsumerAcceptOptions, VOErrorConsumer, ErrorPhase } from "./consumers/VOConsumer";
 import { VOSender, RetrieveResponse } from "./senders/VOSender";
 import { VOPlugin, PluginKind } from "./base/VOPlugin";
 import { uniq, isArray, take } from "lodash";
@@ -74,6 +74,8 @@ export class VORuntime {
 
     private consumers: Array<VOConsumer> = [];
 
+    private error_consumers: Array<VOErrorConsumer> = [];
+
     private senders: Array<VOSender> = [];
 
     public with(p: VOPlugin | ArrayLike<VOPlugin>): VORuntime {
@@ -87,8 +89,11 @@ export class VORuntime {
                     if (p instanceof VOParser) { this.addParser(p); } break;
                 case PluginKind.Sender:
                     if (p instanceof VOSender) { this.addSender(p); } break;
+                case PluginKind.ErrorConsumer:
+                    if (p instanceof VOErrorConsumer) { this.addErrorConsumer(p); } break;
                 case PluginKind.ResourceStore:
                     if (p instanceof Store) { this._store = p; } break;
+
                 default: break;
             }
 
@@ -111,6 +116,12 @@ export class VORuntime {
         this.senders.push(c);
         return this;
     }
+
+    public addErrorConsumer(c: VOErrorConsumer): VORuntime {
+        this.error_consumers.push(c);
+        return this;
+    }
+
 
     /**
      * destroy runtime & db connection
@@ -262,7 +273,9 @@ export class VORuntime {
      */
     private async onContentRequest(resource: Resource): Promise<void> {
 
-        const sender = await this._getSender(resource.uri);
+        const { uri } = resource;
+
+        const sender = await this._getSender(uri);
 
         if (sender) {
             // use sender to retrieve data
@@ -271,7 +284,8 @@ export class VORuntime {
                 this.bus.emit("onContentReceived", resource, content);
             } catch (error) {
                 // error here
-                this.logger.error(`fetch ${resource.uri} failed: ${error}`);
+                await this._consumerError(uri, error, undefined, ErrorPhase.SendRequest);
+                this.logger.error(`fetch ${uri} failed: ${error}`);
                 await this._setResourceProcessed(resource);
             }
 
@@ -290,19 +304,19 @@ export class VORuntime {
      * @param resource 
      * @param originalContent 
      */
-    private async onContentReceived(resource: Resource, originalContent: RetrieveResponse): Promise<void> {
+    private async onContentReceived(resource: Resource, { content, type }: RetrieveResponse): Promise<void> {
 
-        const parser = await this._getParser({ uri: resource.uri, type: originalContent.type });
+        const parser = await this._getParser({ uri: resource.uri, type: type });
         const newContent = new Content();
 
         newContent.resource = resource;
-        newContent.blob = originalContent.content;
-        newContent.type = originalContent.type; // fallback type
+        newContent.blob = content;
+        newContent.type = type; // fallback type
 
         if (parser) {
 
             try {
-                const { links, parsedObject, type } = await parser.parse(originalContent.content);
+                const { links, parsedObject, type } = await parser.parse(content);
 
                 newContent.type = type;
                 newContent.setContent(parsedObject || {});
@@ -312,6 +326,8 @@ export class VORuntime {
                 }
 
             } catch (error) {
+
+                await this._consumerError(resource.uri, error, type, ErrorPhase.ParseContent);
 
                 this.logger.error(`parse content failed for uri: '${resource.uri}', ${error}`);
 
@@ -324,20 +340,46 @@ export class VORuntime {
     }
 
     /**
+     * dispatch error to consumer
+     * 
+     * @param uri 
+     * @param error 
+     * @param type 
+     */
+    private async _consumerError(uri: string, error: Error, type?: string, phase: ErrorPhase = ErrorPhase.InternalUnknown): Promise<void> {
+        for (let i = 0; i < this.error_consumers.length; i++) {
+            const c = this.error_consumers[i];
+            try {
+                if (await c.accept({ uri, type })) {
+                    await c.consume(error, { uri, type, phase });
+                }
+            } catch (error) {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+                // @ts-ignore
+                this.logger.error("error happened in error consumer: ", c?.constructor?.name);
+            }
+
+        }
+    }
+
+    /**
      * onContentParsed, consume it
      * 
      * @param content 
      */
     private async onContentParsed(content: Content): Promise<void> {
 
-        const cs = await this._getConsumers({ uri: content.resource.uri, type: content.type });
+        const { type, resource: { uri } } = content;
+
+        const cs = await this._getConsumers({ uri, type });
 
         await Promise.all(
             cs.map(async c => {
                 try {
                     await c.consume(content);
                 } catch (error) {
-                    this.logger.error(`consume ${content.resource.uri} failed: ${error}`);
+                    await this._consumerError(uri, error, type, ErrorPhase.ConsumeData);
+                    this.logger.error(`consume ${uri} failed: ${error}`);
                 }
             })
         );
