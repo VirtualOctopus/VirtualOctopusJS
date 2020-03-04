@@ -59,3 +59,4 @@ export abstract class Store extends VOPlugin {
 }
 
 export * from "./MemoryStore";
+export * from "./MySQLStore";
