@@ -34,6 +34,7 @@ jobs:
         npm run coverage
       env:
         CI: true
+        MYSQL_HOST: mysql
         MYSQL_USER: vo
         MYSQL_PASSWORD: vo
         MYSQL_DATABASE: vo
