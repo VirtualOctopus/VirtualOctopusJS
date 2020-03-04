@@ -8,14 +8,15 @@ jobs:
 
     services:
       mysql:
-        image: mariadb:10.3
+        image: mariadb:10.4
         env:
           MYSQL_DATABASE: vo
           MYSQL_USER: vo
           MYSQL_PASSWORD: vo
+          MYSQL_ROOT_PASSWORD: root-password
         ports:
           - 3306
-        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=3s --health-retries=5
 
     strategy:
       matrix:
