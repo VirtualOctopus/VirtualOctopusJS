@@ -38,3 +38,8 @@ export class MemoryStore extends Store {
     }
 
 }
+
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+export const createMemoryStore = () => {
+    return new MemoryStore();
+};

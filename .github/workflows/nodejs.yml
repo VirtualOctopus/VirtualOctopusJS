@@ -16,6 +16,13 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
+
+    - uses: mirromutth/mysql-action@v1.1
+      with:
+        mysql database: 'vo'
+        mysql user: 'vo'
+        mysql password: 'vo'
+        
     - name: npm install, build, and test
       run: |
         npm ci
@@ -23,6 +30,9 @@ jobs:
         npm run coverage
       env:
         CI: true
+        MYSQL_USER: vo
+        MYSQL_PASSWORD: vo
+        MYSQL_DATABASE: vo
     - name: upload coverage
       uses: codecov/codecov-action@v1
       with: 
