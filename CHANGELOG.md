@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.28](https://github.com/VirtualOctopus/VirtualOctopusJS/compare/v0.0.27...v0.0.28) (2020-03-04)
+
+
+### Features
+
+* [#5](https://github.com/VirtualOctopus/VirtualOctopusJS/issues/5) error consumer ([af46f80](https://github.com/VirtualOctopus/VirtualOctopusJS/commit/af46f80f9a501ba76abd739fb488e8ae4e1571ab))
+* mysql resource store ([d34526e](https://github.com/VirtualOctopus/VirtualOctopusJS/commit/d34526e00647ceaf94221f3041d3da9dd934aaf1))
+* mysql store ([fa4ddc1](https://github.com/VirtualOctopus/VirtualOctopusJS/commit/fa4ddc1e25cf38aa33872bfeb60cabe0757935c0))
+
+
+### Bug Fixes
+
+* ci connection ([141c77b](https://github.com/VirtualOctopus/VirtualOctopusJS/commit/141c77bf833d45e86a7fa716917f1f0f5dd01bf3))
+* mysql connection not release TCP ([6341fd5](https://github.com/VirtualOctopus/VirtualOctopusJS/commit/6341fd515a3813bff30e906ec8344622d397fd6f))
+* **ci:** again ([677a2d0](https://github.com/VirtualOctopus/VirtualOctopusJS/commit/677a2d0acae1d87e6e753f14e9476a3f0c5153ee))
+* **ci:** again and again ([5e650eb](https://github.com/VirtualOctopus/VirtualOctopusJS/commit/5e650eb0c9dd0b7897914e6853ce477a48c2c22f))
+* **ci:** script ([57bd730](https://github.com/VirtualOctopus/VirtualOctopusJS/commit/57bd730a65f45e0639452630e7d468e6d90df220))
+
 ### [0.0.27](https://github.com/VirtualOctopus/VirtualOctopusJS/compare/v0.0.26...v0.0.27) (2020-03-01)
 
 ### [0.0.26](https://github.com/VirtualOctopus/VirtualOctopusJS/compare/v0.0.25...v0.0.26) (2020-03-01)
