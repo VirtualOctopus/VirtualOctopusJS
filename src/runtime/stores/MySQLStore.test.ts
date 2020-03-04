@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { createMySQLStore } from "./MySQLStore";
 import { ResourceProcessStatus } from "../models";
 import { createConnection } from "mysql2/promise";
@@ -38,13 +39,16 @@ describe('MySQL Store Test Suite', () => {
 
     });
 
-    afterAll(async () => {
-        const conn = await createConnection({ host: CONN_HOST, user: CONN_USER, password: CONN_PASS, database: CONN_DATABASE, port: parseInt(CONN_PORT, 10) });
-        await conn.query("truncate table vo;");
-        await conn.end();
+    afterAll(done => {
+        (
+            async () => {
+                const conn = await createConnection({ host: CONN_HOST, user: CONN_USER, password: CONN_PASS, database: CONN_DATABASE, port: parseInt(CONN_PORT, 10) });
+                await conn.query("truncate table vo;");
+                await conn.end();
+                done();
+            }
+        )();
     });
-
-
 
 });
 
