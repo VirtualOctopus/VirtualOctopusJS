@@ -14,7 +14,7 @@ jobs:
           MYSQL_USER: vo
           MYSQL_PASSWORD: vo
         ports:
-          - 53306:3306
+          - 3306/tcp
 
     strategy:
       matrix:
@@ -38,7 +38,7 @@ jobs:
         MYSQL_USER: vo
         MYSQL_PASSWORD: vo
         MYSQL_DATABASE: vo
-        MYSQL_PORT: 53306
+        MYSQL_PORT: ${{ job.services.mysql.ports['3306'] }}
 
     - name: upload coverage
       uses: codecov/codecov-action@v1

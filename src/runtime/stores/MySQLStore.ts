@@ -4,7 +4,7 @@ import mysql, { PoolOptions, Pool } from "mysql2/promise";
 import { Store } from ".";
 import { ResourceProcessStatus } from "../models";
 
-export interface MySQLStoreOptions extends PoolOptions {
+export interface MySQLStoreOptions {
     sync?: boolean;
     tableName?: string;
 }
@@ -82,13 +82,15 @@ class MySQLStore extends Store {
 
 }
 
-export const createMySQLStore = async (options?: MySQLStoreOptions) => {
-    const dOpts = Object.assign(DefaultMySQLStoreOptions, options);
-    const pool = mysql.createPool(dOpts);
-    const store = new MySQLStore(pool);
+export const createMySQLStore = async (options?: PoolOptions, storeOptions?: MySQLStoreOptions) => {
+    const dOpts = Object.assign(DefaultMySQLStoreOptions, storeOptions);
+    const pool = mysql.createPool(options);
+
+    const store = new MySQLStore(pool, dOpts.tableName);
     if (dOpts.sync) {
         // @ts-ignore
         await store._SyncTable();
     }
+
     return store;
 };
