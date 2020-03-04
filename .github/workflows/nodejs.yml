@@ -14,7 +14,7 @@ jobs:
           MYSQL_USER: vo
           MYSQL_PASSWORD: vo
         ports:
-          - 3306/tcp
+          - 3306
         options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
 
     strategy:
@@ -38,7 +38,7 @@ jobs:
         MYSQL_USER: vo
         MYSQL_PASSWORD: vo
         MYSQL_DATABASE: vo
-        MYSQL_PORT: ${{ job.services.mysql.ports['3306'] }}
+        MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
 
     - name: upload coverage
       uses: codecov/codecov-action@v1
