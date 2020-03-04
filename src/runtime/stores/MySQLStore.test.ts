@@ -6,6 +6,7 @@ const CONN_HOST = process.env.MYSQL_HOST || "127.0.0.1";
 const CONN_USER = process.env.MYSQL_USER;
 const CONN_PASS = process.env.MYSQL_PASSWORD;
 const CONN_DATABASE = process.env.MYSQL_DATABASE || "vo";
+const CONN_PORT = process.env.MYSQL_PORT || "3306";
 
 if (!CONN_USER) { // only test on mysql setup on env
     describe = describe.skip;
@@ -15,14 +16,14 @@ describe('MySQL Store Test Suite', () => {
 
 
     beforeAll(async () => {
-        const conn = await createConnection({ host: CONN_HOST, user: CONN_USER, password: CONN_PASS, });
+        const conn = await createConnection({ host: CONN_HOST, user: CONN_USER, password: CONN_PASS, port: parseInt(CONN_PORT, 10) });
         await conn.query("create database if not exists vo;");
         await conn.end();
     });
 
     it('should assert status change', async () => {
         const u1 = "https://qq.com/resource1";
-        const store = await createMySQLStore({ host: CONN_HOST, user: CONN_USER, password: CONN_PASS, database: CONN_DATABASE });
+        const store = await createMySQLStore({ host: CONN_HOST, user: CONN_USER, password: CONN_PASS, database: CONN_DATABASE, port: parseInt(CONN_PORT, 10) });
         expect(await store.status(u1)).toBeNull();
         await store.save(u1, ResourceProcessStatus.NEW);
         expect(await store.status(u1)).toBe(ResourceProcessStatus.NEW);
@@ -38,7 +39,7 @@ describe('MySQL Store Test Suite', () => {
     });
 
     afterAll(async () => {
-        const conn = await createConnection({ host: CONN_HOST, user: CONN_USER, password: CONN_PASS, database: CONN_DATABASE });
+        const conn = await createConnection({ host: CONN_HOST, user: CONN_USER, password: CONN_PASS, database: CONN_DATABASE, port: parseInt(CONN_PORT, 10) });
         await conn.query("truncate table vo;");
         await conn.end();
     });
