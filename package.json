@@ -34,7 +34,7 @@
     "lodash": "^4.17.15",
     "log4js": "^6.1.2",
     "mysql2": "^2.1.0",
-    "uuid": "^7.0.1"
+    "uuid": "^7.0.2"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^8.3.4",
