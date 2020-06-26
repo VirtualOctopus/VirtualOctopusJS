@@ -39,6 +39,6 @@ export abstract class PooledVOSender extends VOSender {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async poolRetrieve(uri?: string): Promise<RetrieveResponse> {
         throw new Error("Not impl, please overwrite PooledVOSender.poolRetrieve method");
-    };
+    }
 
 }

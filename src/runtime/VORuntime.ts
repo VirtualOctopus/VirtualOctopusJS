@@ -353,7 +353,7 @@ export class VORuntime {
                 if (await c.accept({ uri, type })) {
                     await c.consume(error, { uri, type, phase });
                 }
-            } catch (error) {
+            } catch {
                 this.logger.error("error happened in error consumer: ", c?.constructor?.name);
             }
 

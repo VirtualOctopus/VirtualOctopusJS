@@ -20,9 +20,9 @@ d('MySQL Store Test Suite', () => {
 
     it('should assert status change', async () => {
 
-        const tableName = v4();
+        const tableName = 'vo_resource';
 
-        const pool = createPool({ host: CONN_HOST, user: CONN_USER, password: CONN_PASS, port: CONN_PORT, connectTimeout: 1000 * 30 });
+        const pool = createPool({ host: CONN_HOST, user: CONN_USER, password: CONN_PASS, port: CONN_PORT, connectTimeout: 30 * 1000 });
 
         // setup database
         const conn = await pool.getConnection();
