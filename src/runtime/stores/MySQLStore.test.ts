@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { createMySQLStore } from "./MySQLStore";
 import { ResourceProcessStatus } from "../models";
 import { createPool } from "mysql2/promise";
@@ -10,11 +9,13 @@ const CONN_PASS = process.env.MYSQL_PASSWORD;
 const CONN_DATABASE = process.env.MYSQL_DATABASE || "vo";
 const CONN_PORT = parseInt(process.env.MYSQL_PORT || "3306", 10);
 
+let d = describe;
+
 if (!CONN_USER) { // only test on mysql setup on env
-    describe = describe.skip;
+    d = describe.skip;
 }
 
-describe('MySQL Store Test Suite', () => {
+d('MySQL Store Test Suite', () => {
 
     it('should assert status change', async () => {
 
@@ -34,8 +35,9 @@ describe('MySQL Store Test Suite', () => {
         } else {
             // database not exist
             await conn.query(`create database if not exists ${CONN_DATABASE};`); // create database
-            conn.release();
         }
+
+        conn.release();
 
         const u1 = "https://qq.com/resource1";
         const store = await createMySQLStore(
