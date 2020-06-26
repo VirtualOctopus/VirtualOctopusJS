@@ -16,7 +16,7 @@
     "url": "git+https://github.com/VirtualOctopus/VirtualOctopusJS.git"
   },
   "engines": {
-    "node": ">10"
+    "node": ">=10"
   },
   "author": {
     "name": "Theo Sun",

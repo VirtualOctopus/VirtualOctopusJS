@@ -2,6 +2,7 @@ import { createMySQLStore } from "./MySQLStore";
 import { ResourceProcessStatus } from "../models";
 import { createPool } from "mysql2/promise";
 import { size, range } from "@newdash/newdash-node";
+import { v4 } from "uuid";
 
 const CONN_HOST = process.env.MYSQL_HOST || "127.0.0.1";
 const CONN_USER = process.env.MYSQL_USER;
@@ -19,9 +20,9 @@ d('MySQL Store Test Suite', () => {
 
     it('should assert status change', async () => {
 
-        const tableName = "vo_resource";
+        const tableName = v4();
 
-        const pool = createPool({ host: CONN_HOST, user: CONN_USER, password: CONN_PASS, port: CONN_PORT });
+        const pool = createPool({ host: CONN_HOST, user: CONN_USER, password: CONN_PASS, port: CONN_PORT, connectTimeout: 1000 * 30 });
 
         // setup database
         const conn = await pool.getConnection();
