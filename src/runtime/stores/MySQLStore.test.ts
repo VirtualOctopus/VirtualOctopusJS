@@ -2,7 +2,7 @@
 import { createMySQLStore } from "./MySQLStore";
 import { ResourceProcessStatus } from "../models";
 import { createPool } from "mysql2/promise";
-import { size, range } from "lodash";
+import { size, range } from "@newdash/newdash-node";
 
 const CONN_HOST = process.env.MYSQL_HOST || "127.0.0.1";
 const CONN_USER = process.env.MYSQL_USER;

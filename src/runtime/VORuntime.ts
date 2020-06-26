@@ -5,7 +5,7 @@ import log4js from "log4js";
 import { VOConsumer, ConsumerAcceptOptions, VOErrorConsumer, ErrorPhase } from "./consumers/VOConsumer";
 import { VOSender, RetrieveResponse } from "./senders/VOSender";
 import { VOPlugin, PluginKind } from "./base/VOPlugin";
-import { uniq, isArray, take } from "lodash";
+import { uniq, isArray, take } from "@newdash/newdash-node";
 import { Store, MemoryStore } from ".";
 import * as uuid from "uuid";
 
@@ -354,8 +354,6 @@ export class VORuntime {
                     await c.consume(error, { uri, type, phase });
                 }
             } catch (error) {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-                // @ts-ignore
                 this.logger.error("error happened in error consumer: ", c?.constructor?.name);
             }
 

@@ -28,10 +28,10 @@
   },
   "homepage": "https://github.com/VirtualOctopus/VirtualOctopusJS#readme",
   "dependencies": {
+    "@newdash/newdash-node": "^5.7.0",
     "await-semaphore": "^0.1.3",
     "cheerio": "^1.0.0-rc.3",
     "got": "^10.6.0",
-    "lodash": "^4.17.15",
     "log4js": "^6.1.2",
     "mysql2": "^2.1.0",
     "uuid": "^7.0.2"
@@ -39,41 +39,19 @@
   "devDependencies": {
     "@commitlint/config-conventional": "^8.3.4",
     "@types/cheerio": "^0.22.16",
-    "@types/jest": "^24.9.0",
-    "@types/lodash": "^4.14.149",
+    "@types/jest": "^26.0.0",
     "@types/mysql2": "github:types/mysql2#master",
     "@types/uuid": "^7.0.0",
-    "@typescript-eslint/eslint-plugin": "^2.16.0",
-    "@typescript-eslint/parser": "^2.16.0",
+    "@typescript-eslint/eslint-plugin": "^3.2.0",
+    "@typescript-eslint/parser": "^3.2.0",
     "commitlint": "^8",
-    "eslint": "^6",
+    "eslint": "^7.2.0",
     "husky": "^4",
-    "jest": "^25",
-    "standard-version": "^7",
-    "ts-jest": "^25",
+    "jest": "^26.0.1",
+    "standard-version": "^8.0.0",
+    "ts-jest": "^26.1.0",
     "ts-node": "^8",
-    "typescript": "^3"
-  },
-  "jest": {
-    "testTimeout": 30000,
-    "transform": {
-      ".(ts|tsx)": "ts-jest"
-    },
-    "collectCoverageFrom": [
-      "src/**/*.ts",
-      "!**/node_modules/**"
-    ],
-    "coveragePathIgnorePatterns": [
-      "node_modules/",
-      "src/bin"
-    ],
-    "testEnvironment": "node",
-    "testRegex": "/src/.*\\.test\\.ts$",
-    "moduleFileExtensions": [
-      "ts",
-      "js",
-      "json"
-    ]
+    "typescript": "^3.9.5"
   },
   "husky": {
     "hooks": {

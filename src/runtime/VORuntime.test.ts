@@ -1,5 +1,5 @@
 import { VORuntime, createVORuntime } from './VORuntime';
-import { map } from "lodash";
+import { map } from "@newdash/newdash-node";
 import { ResourceProcessStatus } from './models';
 import { DefaultBasicHTTPSender } from './senders';
 import { createCheerioParser } from './parsers';
