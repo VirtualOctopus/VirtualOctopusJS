@@ -5,7 +5,7 @@ import log4js from "log4js";
 import { VOConsumer, ConsumerAcceptOptions, VOErrorConsumer, ErrorPhase } from "./consumers/VOConsumer";
 import { VOSender, RetrieveResponse } from "./senders/VOSender";
 import { VOPlugin, PluginKind } from "./base/VOPlugin";
-import { uniq, isArray, take } from "@newdash/newdash-node";
+import { uniq, isArray, take } from "@newdash/newdash";
 import { Store, MemoryStore } from ".";
 import * as uuid from "uuid";
 
