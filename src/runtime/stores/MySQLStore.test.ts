@@ -21,7 +21,7 @@ d('MySQL Store Test Suite', () => {
 
         const tableName = 'vo_resource';
 
-        const pool = createPool({ host: CONN_HOST, user: CONN_USER, password: CONN_PASS, port: CONN_PORT, connectTimeout: 30 * 1000 });
+        const pool = createPool({ host: CONN_HOST, user: CONN_USER, password: CONN_PASS, port: CONN_PORT, connectTimeout: 120 * 1000 });
 
         // setup database
         const conn = await pool.getConnection();
