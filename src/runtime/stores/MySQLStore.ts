@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-/* eslint-disable @typescript-eslint/ban-ts-ignore */
+// @ts-nocheck
 import mysql, { PoolOptions, Pool } from "mysql2/promise";
 import { Store } from ".";
 import { ResourceProcessStatus } from "../models";
@@ -46,9 +45,9 @@ class MySQLStore extends Store {
 
     async status(uri: string): Promise<ResourceProcessStatus> {
         const [results] = await this._pool.query(`select status from ${this._tableName} where uri = ?;`, [uri]);
-        // @ts-ignore
+
         if (results.length > 0) {
-            // @ts-ignore
+
             const { status } = results[0];
             return status as ResourceProcessStatus;
         } else {
@@ -60,13 +59,11 @@ class MySQLStore extends Store {
     async query(status: ResourceProcessStatus, maxCount?: number): Promise<string[]> {
         let results = [];
         if (maxCount) {
-            // @ts-ignore
             results = (await this._pool.query(`select uri from ${this._tableName} where status = ? limit ?`, [status, maxCount]))[0];
         } else {
-            // @ts-ignore
             results = (await this._pool.query(`select uri from ${this._tableName} where status = ?`, [status]))[0];
         }
-        // @ts-ignore
+
         const uris = results.map(row => row.uri);
         return uris;
     }
@@ -92,7 +89,6 @@ export const createMySQLStore = async (options?: PoolOptions, storeOptions?: MyS
     const store = new MySQLStore(pool, dOpts.tableName);
 
     if (dOpts.sync) {
-        // @ts-ignore
         await store._SyncTable();
     }
 

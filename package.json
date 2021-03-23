@@ -28,30 +28,29 @@
   },
   "homepage": "https://github.com/VirtualOctopus/VirtualOctopusJS#readme",
   "dependencies": {
-    "@newdash/newdash": "^5.13.0",
+    "@newdash/newdash": "^5.17.1",
     "await-semaphore": "^0.1.3",
-    "cheerio": "^1.0.0-rc.3",
-    "got": "^11.6.0",
+    "cheerio": "^1.0.0-rc.5",
+    "got": "^11.8.2",
     "log4js": "^6.3.0",
-    "mysql2": "^2.1.0",
-    "uuid": "^8.3.0"
+    "mysql2": "^2.2.5",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^11.0.0",
-    "@types/cheerio": "^0.22.21",
-    "@types/jest": "^26.0.13",
-    "@types/mysql2": "github:types/mysql2#master",
+    "@types/cheerio": "^0.22.28",
+    "@types/jest": "^26.0.21",
     "@types/uuid": "^8.3.0",
-    "@typescript-eslint/eslint-plugin": "^4.3.0",
-    "@typescript-eslint/parser": "^4.3.0",
+    "@typescript-eslint/eslint-plugin": "^4.19.0",
+    "@typescript-eslint/parser": "^4.19.0",
     "commitlint": "^11.0.0",
-    "eslint": "^7.10.0",
+    "eslint": "^7.22.0",
     "husky": "^4.2.5",
-    "jest": "^26.4.2",
-    "standard-version": "^9.0.0",
-    "ts-jest": "^26.3.0",
-    "ts-node": "^9.0.0",
-    "typescript": "^4.0.3"
+    "jest": "^26.6.3",
+    "standard-version": "^9.1.1",
+    "ts-jest": "^26.5.4",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.2.3"
   },
   "husky": {
     "hooks": {

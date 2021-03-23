@@ -11,8 +11,8 @@ export abstract class VOSender extends VOPlugin {
         return PluginKind.Sender;
     }
 
-    abstract async accept(uri: string): Promise<boolean>;
+    abstract accept(uri: string): Promise<boolean>;
 
-    abstract async retrieve(uri: string): Promise<RetrieveResponse>;
+    abstract retrieve(uri: string): Promise<RetrieveResponse>;
 
 }

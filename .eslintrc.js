@@ -18,6 +18,7 @@ module.exports = {
     rules: {
         "semi": [2], // must end with semi
         "no-extra-semi": [0],
-        "@typescript-eslint/no-explicit-any": [0]
+        "@typescript-eslint/no-explicit-any": [0],
+        "@typescript-eslint/ban-ts-comment": [0]
     }
 };

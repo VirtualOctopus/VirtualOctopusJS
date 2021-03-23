@@ -1,5 +1,5 @@
 import { VOSender, RetrieveResponse } from "./VOSender";
-import { Semaphore } from "await-semaphore";
+import { Semaphore } from "@newdash/newdash/functional/Semaphore";
 
 interface ReleaseFunc {
     (): void;

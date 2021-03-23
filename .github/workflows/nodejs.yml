@@ -3,7 +3,6 @@ name: Node CI
 on: push
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     services:
@@ -20,39 +19,39 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [10.x, 12.x, 14.x]
+        node-version: [12.x, 14.x]
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
 
-    - name: Cache node modules
-      uses: actions/cache@v1
-      env:
-        cache-name: cache-node-modules
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
+      - name: Cache node modules
+        uses: actions/cache@v1
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
 
-    - name: npm install
-      run: npm ci
-      
-    - name: npm build
-      run: npm run build
+      - name: npm install
+        run: npm ci
 
-    - name: npm test
-      run: npm run coverage
-      env:
-        CI: true
-        MYSQL_USER: vo
-        MYSQL_PASSWORD: vo
-        MYSQL_DATABASE: vo
-        MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
+      - name: npm build
+        run: npm run build
 
-    - name: upload coverage
-      uses: codecov/codecov-action@v1
-      with: 
-        token: ${{ secrets.CODECOV_TOKEN }}
+      - name: npm test
+        run: npm run coverage
+        env:
+          CI: true
+          MYSQL_USER: vo
+          MYSQL_PASSWORD: vo
+          MYSQL_DATABASE: vo
+          MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
+
+      - name: upload coverage
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
