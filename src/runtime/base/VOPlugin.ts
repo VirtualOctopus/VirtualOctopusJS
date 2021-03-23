@@ -1,11 +1,15 @@
 
 
 export enum PluginKind {
-    Consumer,
-    Parser,
-    Sender,
-    ResourceStore,
-    ErrorConsumer,
+    Consumer = "Consumer",
+    Parser = "Parser",
+    Sender = "Sender",
+    ResourceStore = "ResourceStore",
+    ErrorConsumer = "ErrorConsumer",
+    /**
+     * pre-built package with many plugins
+     */
+    Package = "Package",
 }
 
 export abstract class VOPlugin {

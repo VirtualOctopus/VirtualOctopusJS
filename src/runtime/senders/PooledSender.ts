@@ -15,7 +15,6 @@ export abstract class PooledVOSender extends VOSender {
   constructor(concurrent = 25) {
     super();
     this.sem = new Semaphore(concurrent);
-
   }
 
   private sem: Semaphore = new Semaphore(25);
@@ -28,11 +27,11 @@ export abstract class PooledVOSender extends VOSender {
     const release = await this.acquire(); // require a sem
     try {
       const rt = await this.poolRetrieve(uri);
-      release(); // release sem
       return rt;
     } catch (error) {
-      release(); // release
       throw error;
+    } finally {
+      release();
     }
   }
 

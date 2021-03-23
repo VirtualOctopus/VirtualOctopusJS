@@ -8,6 +8,7 @@ import { VOPlugin, PluginKind } from "./base/VOPlugin";
 import { uniq, isArray, take } from "@newdash/newdash";
 import { Store, MemoryStore } from ".";
 import * as uuid from "uuid";
+import { VOPackage } from './base/VOPackage';
 
 export interface VORuntimeOptions {
 
@@ -89,7 +90,8 @@ export class VORuntime {
           if (p instanceof VOErrorConsumer) { this.addErrorConsumer(p); } break;
         case PluginKind.ResourceStore:
           if (p instanceof Store) { this._store = p; } break;
-
+        case PluginKind.Package:
+          if (p instanceof VOPackage) { this.with(p.getPlugins()); } break;
         default: break;
       }
 

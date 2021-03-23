@@ -46,7 +46,7 @@ export class DefaultPooledBasicHTTPSender extends PooledVOSender {
 
   private _client: Got
 
-  async accept(): Promise<boolean> {
+  async accept(uri: string): Promise<boolean> {
     return true;
   }
 
