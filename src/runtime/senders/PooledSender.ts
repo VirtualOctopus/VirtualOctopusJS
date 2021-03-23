@@ -2,7 +2,7 @@ import { VOSender, RetrieveResponse } from "./VOSender";
 import { Semaphore } from "@newdash/newdash/functional/Semaphore";
 
 interface ReleaseFunc {
-    (): void;
+  (): void;
 }
 
 /**
@@ -12,33 +12,33 @@ interface ReleaseFunc {
  */
 export abstract class PooledVOSender extends VOSender {
 
-    constructor(concurrent = 25) {
-        super();
-        this.sem = new Semaphore(concurrent);
+  constructor(concurrent = 25) {
+    super();
+    this.sem = new Semaphore(concurrent);
 
+  }
+
+  private sem: Semaphore = new Semaphore(25);
+
+  protected async acquire(): Promise<ReleaseFunc> {
+    return await this.sem.acquire();
+  }
+
+  async retrieve(uri: string): Promise<RetrieveResponse> {
+    const release = await this.acquire(); // require a sem
+    try {
+      const rt = await this.poolRetrieve(uri);
+      release(); // release sem
+      return rt;
+    } catch (error) {
+      release(); // release
+      throw error;
     }
+  }
 
-    private sem: Semaphore = new Semaphore(25);
-
-    protected async acquire(): Promise<ReleaseFunc> {
-        return await this.sem.acquire();
-    }
-
-    async retrieve(uri: string): Promise<RetrieveResponse> {
-        const release = await this.acquire(); // require a sem
-        try {
-            const rt = await this.poolRetrieve(uri);
-            release(); // release sem
-            return rt;
-        } catch (error) {
-            release(); // release
-            throw error;
-        }
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async poolRetrieve(uri?: string): Promise<RetrieveResponse> {
-        throw new Error("Not impl, please overwrite PooledVOSender.poolRetrieve method");
-    }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async poolRetrieve(uri?: string): Promise<RetrieveResponse> {
+    throw new Error("Not impl, please overwrite PooledVOSender.poolRetrieve method");
+  }
 
 }

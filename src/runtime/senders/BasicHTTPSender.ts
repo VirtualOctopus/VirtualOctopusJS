@@ -11,26 +11,26 @@ import got, { Options, Got } from "got";
  */
 export class DefaultBasicHTTPSender extends VOSender {
 
-    /**
-     * DefaultBasicHTTPSender
-     * 
-     * @param opt options of all http requests
-     */
-    constructor(opt: Options = {}) {
-        super();
-        this._client = got.extend(opt);
-    }
+  /**
+   * DefaultBasicHTTPSender
+   * 
+   * @param opt options of all http requests
+   */
+  constructor(opt: Options = {}) {
+    super();
+    this._client = got.extend(opt);
+  }
 
-    private _client: Got
+  private _client: Got
 
-    async accept(): Promise<boolean> {
-        return true;
-    }
+  async accept(): Promise<boolean> {
+    return true;
+  }
 
-    async retrieve(uri: string): Promise<RetrieveResponse> {
-        const response = await this._client(uri);
-        return { content: Buffer.from(response.body, "utf8"), type: response.headers["content-type"] };
-    }
+  async retrieve(uri: string): Promise<RetrieveResponse> {
+    const response = await this._client(uri);
+    return { content: Buffer.from(response.body, "utf8"), type: response.headers["content-type"] };
+  }
 
 }
 
@@ -39,21 +39,21 @@ export class DefaultBasicHTTPSender extends VOSender {
  */
 export class DefaultPooledBasicHTTPSender extends PooledVOSender {
 
-    constructor(opt: Options = {}) {
-        super();
-        this._client = got.extend(opt);
-    }
+  constructor(opt: Options = {}) {
+    super();
+    this._client = got.extend(opt);
+  }
 
-    private _client: Got
+  private _client: Got
 
-    async accept(): Promise<boolean> {
-        return true;
-    }
+  async accept(): Promise<boolean> {
+    return true;
+  }
 
-    async poolRetrieve(uri: string): Promise<RetrieveResponse> {
-        const response = await this._client(uri);
-        return { content: Buffer.from(response.body, "utf8"), type: response.headers["content-type"] };
-    }
+  async poolRetrieve(uri: string): Promise<RetrieveResponse> {
+    const response = await this._client(uri);
+    return { content: Buffer.from(response.body, "utf8"), type: response.headers["content-type"] };
+  }
 
 }
 

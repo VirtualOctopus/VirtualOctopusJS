@@ -5,16 +5,16 @@ export * from "./VOConsumer";
 
 export const createTypedVOConsumer = <T = any>(type: string, consumer: (content: Content<T>) => Promise<void>): VOConsumer<T> => {
 
-    return new class extends VOConsumer {
+  return new class extends VOConsumer {
 
-        async accept(options: ConsumerAcceptOptions): Promise<boolean> {
-            return options.type == type;
-        }
+    async accept(options: ConsumerAcceptOptions): Promise<boolean> {
+      return options.type == type;
+    }
 
-        async consume(content: Content<T>): Promise<void> {
-            return consumer(content);
-        }
+    async consume(content: Content<T>): Promise<void> {
+      return consumer(content);
+    }
 
-    };
+  };
 
 };

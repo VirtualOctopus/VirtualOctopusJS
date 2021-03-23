@@ -10,6 +10,9 @@ export class Content<T = any>  {
 
     content: T;
 
+    /**
+     * business type, fallback to mime type
+     */
     type?: string;
 
     /**
