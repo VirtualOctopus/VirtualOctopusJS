@@ -1,6 +1,6 @@
 // @ts-nocheck
-import { PooledVOSender } from "./PooledSender";
-import { RetrieveResponse } from "./VOSender";
+import { PooledVOSender } from "../src/runtime/senders/PooledSender";
+import { RetrieveResponse } from "../src/runtime/senders/VOSender";
 
 describe('Pooled Sender Test Suite', () => {
 

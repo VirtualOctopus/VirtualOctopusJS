@@ -1,10 +1,10 @@
-import { VORuntime, createVORuntime } from './VORuntime';
+import { VORuntime, createVORuntime } from '../src/runtime/VORuntime';
 import { map } from "@newdash/newdash";
-import { ResourceProcessStatus } from './models';
-import { DefaultBasicHTTPSender } from './senders';
-import { createCheerioParser } from './parsers';
-import { createTypedVOConsumer } from './consumers';
-import { MemoryStore } from './stores';
+import { ResourceProcessStatus } from '../src/runtime/models';
+import { DefaultBasicHTTPSender } from '../src/runtime/senders';
+import { createCheerioParser } from '../src/runtime/parsers';
+import { createTypedVOConsumer } from '../src/runtime/consumers';
+import { MemoryStore } from '../src/runtime/stores';
 
 describe('VO Runtime Test Suite', () => {
 

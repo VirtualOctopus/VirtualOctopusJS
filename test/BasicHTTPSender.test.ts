@@ -1,4 +1,4 @@
-import { DefaultPooledBasicHTTPSender } from ".";
+import { DefaultPooledBasicHTTPSender } from "../src/runtime/senders";
 
 
 describe('HTTP Text Sender Test Suite', () => {

@@ -12,7 +12,7 @@ module.exports = {
     'src/test'
   ],
   testEnvironment: "node",
-  testRegex: "/src/.*\\.test\\.ts$",
+  testRegex: "/test/.*\\.test\\.ts$",
   moduleFileExtensions: [
     "ts",
     "js",

@@ -1,6 +1,5 @@
-import { createVOParser, ParserDefaultAcceptAllFunc, ParserDefaultEmptyParseFunc } from ".";
-import { createTypedVOParser } from "./VOParser";
-
+import { createVOParser, ParserDefaultAcceptAllFunc, ParserDefaultEmptyParseFunc } from "../src/runtime/parsers";
+import { createTypedVOParser } from "../src/runtime/parsers/VOParser";
 
 
 describe('VOParser Test Suite', () => {

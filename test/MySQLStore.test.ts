@@ -1,5 +1,5 @@
-import { createMySQLStore } from "./MySQLStore";
-import { ResourceProcessStatus } from "../models";
+import { createMySQLStore } from "../src/runtime/stores/MySQLStore";
+import { ResourceProcessStatus } from "../src/runtime/models";
 import { createPool } from "mysql2/promise";
 import { size, range } from "@newdash/newdash";
 
