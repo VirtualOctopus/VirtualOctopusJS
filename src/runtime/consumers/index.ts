@@ -15,7 +15,6 @@ export const createTypedVOConsumer = <T = any>(type: string, consumer: (content:
             return consumer(content);
         }
 
-
     };
 
 };

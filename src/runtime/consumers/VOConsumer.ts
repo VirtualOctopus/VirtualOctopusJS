@@ -25,9 +25,9 @@ export abstract class VOConsumer<T = any> extends VOPlugin {
         return PluginKind.Consumer;
     }
 
-    abstract async accept(options: ConsumerAcceptOptions): Promise<boolean>;
+    abstract accept(options: ConsumerAcceptOptions): Promise<boolean>;
 
-    abstract async consume(content: Content<T>): Promise<void>;
+    abstract consume(content: Content<T>): Promise<void>;
 
 }
 
@@ -47,6 +47,6 @@ export abstract class VOErrorConsumer extends VOPlugin {
      * 
      * @param error 
      */
-    abstract async consume(error: Error, ctx: ErrorConsumerContext): Promise<void>;
+    abstract consume(error: Error, ctx: ErrorConsumerContext): Promise<void>;
 
 }

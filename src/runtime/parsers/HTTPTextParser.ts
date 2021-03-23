@@ -8,6 +8,6 @@ export default abstract class HTTPTextParser<T = any> extends VOParser<T> {
         return this.parseText(blob.toString("utf-8"));
     }
 
-    abstract async parseText(html: string): Promise<ParseResult<T>>;
+    abstract parseText(html: string): Promise<ParseResult<T>>;
 
 }

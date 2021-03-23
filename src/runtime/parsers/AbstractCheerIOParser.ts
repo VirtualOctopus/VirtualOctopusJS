@@ -1,12 +1,13 @@
 import { ParseResult, ParserDefaultAcceptAllFunc } from './VOParser';
 import HTTPTextParser from './HTTPTextParser';
 import cheerio from "cheerio";
+import type { load } from "cheerio";
 
+type CheerioRoot = ReturnType<typeof load>
 
 export interface CheerioParserExtractFunc<T> {
-    ($: CheerioStatic): Promise<ParseResult<T>>;
+    ($: CheerioRoot): Promise<ParseResult<T>>;
 }
-
 
 export abstract class AbstractCheerIOParser<T = any> extends HTTPTextParser<T> {
 
@@ -15,7 +16,7 @@ export abstract class AbstractCheerIOParser<T = any> extends HTTPTextParser<T> {
         return this.extract($);
     }
 
-    abstract extract($: CheerioStatic): Promise<ParseResult<T>>;
+    abstract extract($: CheerioRoot): Promise<ParseResult<T>>;
 
 }
 
